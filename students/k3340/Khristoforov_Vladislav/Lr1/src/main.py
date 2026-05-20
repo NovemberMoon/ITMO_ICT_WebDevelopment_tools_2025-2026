@@ -1,18 +1,7 @@
 from fastapi import FastAPI
-from contextlib import asynccontextmanager
-
-from database import init_db
 from routers import users, books, exchanges
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    init_db()
-    yield
-
-app = FastAPI(
-    title="BookCrossing API (Practice 1.2)", 
-    lifespan=lifespan
-)
+app = FastAPI(title="BookCrossing API (Practice 1.3)")
 
 app.include_router(users.users_router)
 app.include_router(users.locations_router)
