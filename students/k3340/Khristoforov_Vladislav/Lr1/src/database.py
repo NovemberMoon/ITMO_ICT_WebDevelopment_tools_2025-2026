@@ -1,14 +1,9 @@
-import os
-from dotenv import load_dotenv
-from sqlmodel import SQLModel, Session, create_engine
+from sqlmodel import create_engine, Session
+from config import settings
 
-load_dotenv()
+connect_args = {"check_same_thread": False} if settings.DATABASE_URL.startswith("sqlite") else {}
 
-DB_URL=os.getenv("DB_URL")
-if not DB_URL:
-    raise ValueError("Не найдена переменная DB_URL в файле .env")
-
-engine = create_engine(DB_URL, echo=True)
+engine = create_engine(settings.DATABASE_URL, connect_args=connect_args)
 
 def get_session():
     with Session(engine) as session:

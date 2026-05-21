@@ -6,16 +6,18 @@ from database import get_session
 from models.books import Book, BookPublic, Genre, GenrePublic
 from models.exchanges import ExchangeRequest, ExchangeRequestPublic, Review, ReviewPublic
 from models.users import (
-    User, UserCreate, UserPublic, UserUpdate, UserPublicWithLocation,
+    Role, User, UserChangePassword, UserPublic, UserUpdate, UserPublicWithLocation,
     Location, LocationCreate, LocationUpdate, LocationPublic
 )
+
+from routers.auth import get_current_admin, get_current_user
 
 users_router = APIRouter(prefix="/users", tags=["Users"])
 locations_router = APIRouter(prefix="/locations", tags=["Locations"])
 
-# ЭНДПОИНТЫ ДЛЯ ЛОКАЦИЙ
+# ЭНДПОИНТЫ ДЛЯ ЛОКАЦИЙ (ТОЛЬКО ДЛЯ АДМИНОВ, кроме чтения)
 
-@locations_router.post("/", response_model=LocationPublic)
+@locations_router.post("/", response_model=LocationPublic, dependencies=[Depends(get_current_admin)])
 def create_location(location: LocationCreate, session: Session = Depends(get_session)) -> LocationPublic:
     db_location = Location.model_validate(location)
     session.add(db_location)
@@ -34,7 +36,7 @@ def read_location(location_id: int, session: Session = Depends(get_session)) -> 
         raise HTTPException(status_code=404, detail="Location not found")
     return location
 
-@locations_router.patch("/{location_id}", response_model=LocationPublic)
+@locations_router.patch("/{location_id}", response_model=LocationPublic, dependencies=[Depends(get_current_admin)])
 def update_location(location_id: int, loc_data: LocationUpdate, session: Session = Depends(get_session)) -> LocationPublic:
     db_location = session.get(Location, location_id)
     if not db_location:
@@ -48,7 +50,7 @@ def update_location(location_id: int, loc_data: LocationUpdate, session: Session
     session.refresh(db_location)
     return db_location
 
-@locations_router.delete("/{location_id}")
+@locations_router.delete("/{location_id}", dependencies=[Depends(get_current_admin)])
 def delete_location(location_id: int, session: Session = Depends(get_session)) -> dict:
     location = session.get(Location, location_id)
     if not location:
@@ -59,21 +61,14 @@ def delete_location(location_id: int, session: Session = Depends(get_session)) -
 
 # ЭНДПОИНТЫ ДЛЯ ПОЛЬЗОВАТЕЛЕЙ
 
-@users_router.post("/", response_model=UserPublic)
-def create_user(user: UserCreate, session: Session = Depends(get_session)) -> UserPublic:
-    existing_user = session.exec(select(User).where(User.username == user.username)).first()
-    if existing_user:
-        raise HTTPException(status_code=400, detail="Username already registered")
-        
-    db_user = User.model_validate(user, update={"hashed_password": user.password})
-    session.add(db_user)
-    session.commit()
-    session.refresh(db_user)
-    return db_user
-
 @users_router.get("/", response_model=List[UserPublic])
 def read_users(offset: int = 0, limit: int = Query(default=100, le=100), session: Session = Depends(get_session)) -> List[UserPublic]:
     return session.exec(select(User).where(User.is_active == True).offset(offset).limit(limit)).all()
+
+@users_router.get("/me", response_model=UserPublicWithLocation)
+def read_user_me(current_user: User = Depends(get_current_user)) -> UserPublicWithLocation:
+    """Возвращает профиль текущего авторизованного пользователя"""
+    return current_user
 
 @users_router.get("/{user_id}", response_model=UserPublicWithLocation)
 def read_user(user_id: int, session: Session = Depends(get_session)) -> UserPublicWithLocation:
@@ -83,33 +78,67 @@ def read_user(user_id: int, session: Session = Depends(get_session)) -> UserPubl
     return user
 
 @users_router.patch("/{user_id}", response_model=UserPublic)
-def update_user(user_id: int, user_data: UserUpdate, session: Session = Depends(get_session)) -> UserPublic:
+def update_user(user_id: int, user_data: UserUpdate, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)) -> UserPublic:
+    if current_user.id != user_id and current_user.role != Role.admin:
+        raise HTTPException(status_code=403, detail="Not enough permissions to edit this profile")
+
     db_user = session.get(User, user_id)
-    if not db_user:
+    if not db_user or not db_user.is_active:
         raise HTTPException(status_code=404, detail="User not found")
         
     for key, value in user_data.model_dump(exclude_unset=True).items():
-        if key == "password":
-            setattr(db_user, "hashed_password", value)
-        else:
-            setattr(db_user, key, value)
-            
+        setattr(db_user, key, value)
+        
     session.add(db_user)
     session.commit()
     session.refresh(db_user)
     return db_user
 
+@users_router.post("/{user_id}/password")
+def change_password(
+    user_id: int,
+    password_data: UserChangePassword,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+) -> dict:
+    if current_user.id != user_id and current_user.role != Role.admin:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+        
+    user = session.get(User, user_id)
+    if not user or not user.is_active:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    from security import verify_password, get_password_hash
+    
+    # Обязательная проверка старого пароля для безопасности
+    if not verify_password(password_data.old_password, user.hashed_password):
+        raise HTTPException(status_code=400, detail="Incorrect old password")
+        
+    # Устанавливаем новый хеш
+    user.hashed_password = get_password_hash(password_data.new_password)
+    session.add(user)
+    session.commit()
+    return {"ok": True, "message": "Password changed successfully"}
+
 @users_router.delete("/{user_id}")
-def delete_user(user_id: int, session: Session = Depends(get_session)) -> dict:
+def delete_user(
+    user_id: int, 
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+) -> dict:
+    # Пользователь может удалить только свой профиль
+    if current_user.id != user_id and current_user.role != Role.admin:
+        raise HTTPException(status_code=403, detail="Not enough permissions to delete this profile")
+
     user = session.get(User, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    
-    # МЯГКОЕ УДАЛЕНИЕ - помечаем пользователя как неактивного, но не удаляем из базы данных
-    user.is_active = False
+        
+    # МЯГКОЕ УДАЛЕНИЕ
+    user.is_active = False 
     session.add(user)
     session.commit()
-    return {"ok": True, "message": "User deactivated"}
+    return {"ok": True, "message": "User soft deleted"}
 
 # ВИШЛИСТ ПОЛЬЗОВАТЕЛЯ
 
@@ -122,7 +151,10 @@ def get_wishlist(user_id: int, session: Session = Depends(get_session)) -> List[
     return user.wishlisted_books
 
 @users_router.post("/{user_id}/wishlist/{book_id}")
-def add_to_wishlist(user_id: int, book_id: int, session: Session = Depends(get_session)) -> dict:
+def add_to_wishlist(user_id: int, book_id: int, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)) -> dict:
+    if current_user.id != user_id:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+
     # ДОБАВЛЕНИЕ СВЯЗИ MANY-TO-MANY:
     user = session.get(User, user_id)
     if not user or not user.is_active:
@@ -141,7 +173,10 @@ def add_to_wishlist(user_id: int, book_id: int, session: Session = Depends(get_s
     return {"ok": True, "message": "Book added to wishlist"}
 
 @users_router.delete("/{user_id}/wishlist/{book_id}")
-def remove_from_wishlist(user_id: int, book_id: int, session: Session = Depends(get_session)) -> dict:
+def remove_from_wishlist(user_id: int, book_id: int, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)) -> dict:
+    if current_user.id != user_id:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+
     user = session.get(User, user_id)
     if not user or not user.is_active:
         raise HTTPException(status_code=404, detail="User not found")
@@ -168,7 +203,10 @@ def get_user_genres(user_id: int, session: Session = Depends(get_session)) -> Li
     return user.genres
 
 @users_router.post("/{user_id}/genres/{genre_id}")
-def add_user_genre(user_id: int, genre_id: int, session: Session = Depends(get_session)) -> dict:
+def add_user_genre(user_id: int, genre_id: int, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)) -> dict:
+    if current_user.id != user_id:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+
     user = session.get(User, user_id)
     if not user or not user.is_active:
         raise HTTPException(status_code=404, detail="User not found")
@@ -186,7 +224,10 @@ def add_user_genre(user_id: int, genre_id: int, session: Session = Depends(get_s
     return {"ok": True, "message": "Genre added to user interests"}
 
 @users_router.delete("/{user_id}/genres/{genre_id}")
-def remove_user_genre(user_id: int, genre_id: int, session: Session = Depends(get_session)) -> dict:
+def remove_user_genre(user_id: int, genre_id: int, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)) -> dict:
+    if current_user.id != user_id:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+
     user = session.get(User, user_id)
     if not user or not user.is_active:
         raise HTTPException(status_code=404, detail="User not found")

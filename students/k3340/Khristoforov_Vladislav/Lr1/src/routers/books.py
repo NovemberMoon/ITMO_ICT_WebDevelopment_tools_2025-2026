@@ -8,14 +8,15 @@ from models.books import (
     Genre, GenreCreate, GenreUpdate, GenrePublic
 )
 from models.links import BookGenreLink
-from models.users import Location, User
+from models.users import Location, Role, User
+from routers.auth import get_current_admin, get_current_user
 
 books_router = APIRouter(prefix="/books", tags=["Books"])
 genres_router = APIRouter(prefix="/genres", tags=["Genres"])
 
-# ЭНДПОИНТЫ ДЛЯ ЖАНРОВ
+# ЭНДПОИНТЫ ДЛЯ ЖАНРОВ (ТОЛЬКО ДЛЯ АДМИНОВ, кроме чтения)
 
-@genres_router.post("/", response_model=GenrePublic)
+@genres_router.post("/", response_model=GenrePublic, dependencies=[Depends(get_current_admin)])
 def create_genre(genre: GenreCreate, session: Session = Depends(get_session)) -> GenrePublic:
     db_genre = Genre.model_validate(genre)
     session.add(db_genre)
@@ -34,7 +35,7 @@ def read_genre(genre_id: int, session: Session = Depends(get_session)) -> GenreP
         raise HTTPException(status_code=404, detail="Genre not found")
     return genre
 
-@genres_router.patch("/{genre_id}", response_model=GenrePublic)
+@genres_router.patch("/{genre_id}", response_model=GenrePublic, dependencies=[Depends(get_current_admin)])
 def update_genre(genre_id: int, genre_data: GenreUpdate, session: Session = Depends(get_session)) -> GenrePublic:
     db_genre = session.get(Genre, genre_id)
     if not db_genre:
@@ -48,7 +49,7 @@ def update_genre(genre_id: int, genre_data: GenreUpdate, session: Session = Depe
     session.refresh(db_genre)
     return db_genre
 
-@genres_router.delete("/{genre_id}")
+@genres_router.delete("/{genre_id}", dependencies=[Depends(get_current_admin)])
 def delete_genre(genre_id: int, session: Session = Depends(get_session)) -> dict:
     genre = session.get(Genre, genre_id)
     if not genre:
@@ -60,8 +61,9 @@ def delete_genre(genre_id: int, session: Session = Depends(get_session)) -> dict
 # ЭНДПОИНТЫ ДЛЯ КНИГ
 
 @books_router.post("/", response_model=BookPublic)
-def create_book(book: BookCreate, session: Session = Depends(get_session)) -> BookPublic:
+def create_book(book: BookCreate, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)) -> BookPublic:
     db_book = Book.model_validate(book)
+    db_book.owner_id = current_user.id
     session.add(db_book)
     session.commit()
     session.refresh(db_book)
@@ -116,11 +118,14 @@ def read_books(
 
 
 @books_router.patch("/{book_id}", response_model=BookPublic)
-def update_book(book_id: int, book_data: BookUpdate, session: Session = Depends(get_session)) -> BookPublic:
+def update_book(book_id: int, book_data: BookUpdate, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)) -> BookPublic:
     db_book = session.get(Book, book_id)
-    if not db_book:
+    if not db_book or db_book.is_deleted:
         raise HTTPException(status_code=404, detail="Book not found")
         
+    if db_book.owner_id != current_user.id and current_user.role != Role.admin:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+
     for key, value in book_data.model_dump(exclude_unset=True).items():
         setattr(db_book, key, value)
         
@@ -130,11 +135,14 @@ def update_book(book_id: int, book_data: BookUpdate, session: Session = Depends(
     return db_book
 
 @books_router.delete("/{book_id}")
-def delete_book(book_id: int, session: Session = Depends(get_session)) -> dict:
+def delete_book(book_id: int, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)) -> dict:
     book = session.get(Book, book_id)
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
     
+    if book.owner_id != current_user.id and current_user.role != Role.admin:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+
     # МЯГКОЕ УДАЛЕНИЕ - помечаем запись как удаленную, но не удаляем из базы данных
     book.is_deleted = True
     session.add(book)
@@ -142,10 +150,14 @@ def delete_book(book_id: int, session: Session = Depends(get_session)) -> dict:
     return {"ok": True, "message": "Book soft deleted"}
 
 @books_router.post("/{book_id}/genres/{genre_id}", response_model=BookPublicWithGenres)
-def add_genre_to_book(book_id: int, genre_id: int, session: Session = Depends(get_session)) -> BookPublicWithGenres:
+def add_genre_to_book(book_id: int, genre_id: int, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)) -> BookPublicWithGenres:
     book = session.get(Book, book_id)
-    if not book:
+    if not book or book.is_deleted:
         raise HTTPException(status_code=404, detail="Book not found")
+    
+    if book.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+
     genre = session.get(Genre, genre_id)
     if not genre:
         raise HTTPException(status_code=404, detail="Genre not found")

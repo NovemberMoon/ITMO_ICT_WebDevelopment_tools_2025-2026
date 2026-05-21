@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from routers import users, books, exchanges
+from routers.auth import auth_router
 
 app = FastAPI(title="BookCrossing API (Practice 1.3)")
 
+app.include_router(auth_router)
 app.include_router(users.users_router)
 app.include_router(users.locations_router)
 app.include_router(books.books_router)

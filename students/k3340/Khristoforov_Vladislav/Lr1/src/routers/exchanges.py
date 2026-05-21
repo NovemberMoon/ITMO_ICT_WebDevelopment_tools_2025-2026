@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
@@ -10,6 +10,8 @@ from models.exchanges import (
     ExchangeRequest, ExchangeRequestCreate, ExchangeRequestUpdate, ExchangeRequestPublic, ExchangeStatus,
     Review, ReviewCreate, ReviewUpdate, ReviewPublic
 )
+from models.users import Role, User
+from routers.auth import get_current_user
 
 exchanges_router = APIRouter(prefix="/exchanges", tags=["Exchanges"])
 reviews_router = APIRouter(prefix="/reviews", tags=["Reviews"])
@@ -17,7 +19,9 @@ reviews_router = APIRouter(prefix="/reviews", tags=["Reviews"])
 # ЭНДПОИНТЫ ДЛЯ ОБМЕНОВ
 
 @exchanges_router.post("/", response_model=ExchangeRequestPublic)
-def create_exchange(exchange: ExchangeRequestCreate, session: Session = Depends(get_session)) -> ExchangeRequestPublic:
+def create_exchange(exchange: ExchangeRequestCreate, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)) -> ExchangeRequestPublic:
+    exchange.requester_id = current_user.id
+
     # ЗАЩИТА: Нельзя запросить книгу, которая недоступна
     requested_book = session.get(Book, exchange.requested_book_id)
     if not requested_book or not requested_book.is_available or requested_book.is_deleted:
@@ -53,16 +57,33 @@ def read_exchange(exchange_id: int, session: Session = Depends(get_session)) -> 
     return exchange
 
 @exchanges_router.patch("/{exchange_id}", response_model=ExchangeRequestPublic)
-def update_exchange(exchange_id: int, exchange_data: ExchangeRequestUpdate, session: Session = Depends(get_session)) -> ExchangeRequestPublic:
+def update_exchange(
+    exchange_id: int, 
+    exchange_data: ExchangeRequestUpdate, 
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+) -> ExchangeRequestPublic:
     db_exchange = session.get(ExchangeRequest, exchange_id)
     if not db_exchange or db_exchange.is_deleted:
         raise HTTPException(status_code=404, detail="Exchange request not found")
+        
+    requested_book = session.get(Book, db_exchange.requested_book_id)
+    
+    # Изменять сделку (менять статус, вносить трек-номера и т.д.) может:
+    # 1. Администратор (без ограничений)
+    # 2. Владелец запрошенной книги
+    # 3. Инициатор обмена (но исключительно для перевода сделки в статус REJECTED — отмена)
+    if current_user.role != Role.admin and current_user.id != requested_book.owner_id:
+        if not (current_user.id == db_exchange.requester_id and exchange_data.status == ExchangeStatus.REJECTED):
+            raise HTTPException(status_code=403, detail="Not enough permissions to update this exchange")
 
     old_status = db_exchange.status
 
-    # Заморозка завершенных/отмененных сделок
-    if old_status in [ExchangeStatus.COMPLETED, ExchangeStatus.REJECTED] and exchange_data.status and exchange_data.status != old_status:
-         raise HTTPException(status_code=400, detail="Cannot change the status of a finalized exchange")
+    # ЗАЩИТА: Заморозка завершенных/отмененных сделок для обычных пользователей.
+    # Администратор может обходить эту блокировку для ручной корректировки в случае форс-мажора.
+    if current_user.role != Role.admin:
+        if old_status in [ExchangeStatus.COMPLETED, ExchangeStatus.REJECTED] and exchange_data.status and exchange_data.status != old_status:
+             raise HTTPException(status_code=400, detail="Cannot change the status of a finalized exchange")
 
     for key, value in exchange_data.model_dump(exclude_unset=True).items():
         setattr(db_exchange, key, value)
@@ -97,7 +118,7 @@ def update_exchange(exchange_id: int, exchange_data: ExchangeRequestUpdate, sess
         if requested_book:
             old_owner_id = requested_book.owner_id
             requested_book.owner_id = db_exchange.requester_id
-            requested_book.is_available = False # Новый хозяин читает
+            requested_book.is_available = False # Новый хозяин начинает читать
             session.add(requested_book)
 
             if offered_book:
@@ -105,7 +126,7 @@ def update_exchange(exchange_id: int, exchange_data: ExchangeRequestUpdate, sess
                 offered_book.is_available = False
                 session.add(offered_book)
                 
-        db_exchange.completed_at = datetime.utcnow()
+        db_exchange.completed_at = datetime.now(timezone.utc)
 
     session.add(db_exchange)
     session.commit()
@@ -113,10 +134,18 @@ def update_exchange(exchange_id: int, exchange_data: ExchangeRequestUpdate, sess
     return db_exchange
 
 @exchanges_router.delete("/{exchange_id}")
-def delete_exchange(exchange_id: int, session: Session = Depends(get_session)) -> dict:
+def delete_exchange(
+    exchange_id: int, 
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+) -> dict:
     exchange = session.get(ExchangeRequest, exchange_id)
     if not exchange:
         raise HTTPException(status_code=404, detail="Exchange request not found")
+        
+    # Удалить (архивировать) заявку может её инициатор ИЛИ АДМИН
+    if exchange.requester_id != current_user.id and current_user.role != Role.admin:
+        raise HTTPException(status_code=403, detail="You can only delete your own exchanges")
         
     # ЗАЩИТА: Снятие брони при удалении активной заявки
     if exchange.status == ExchangeStatus.ACCEPTED:
@@ -128,7 +157,7 @@ def delete_exchange(exchange_id: int, session: Session = Depends(get_session)) -
         if offered_book: session.add(offered_book)
         exchange.status = ExchangeStatus.REJECTED # Безопасный перевод статуса
 
-    exchange.is_deleted = True # Архивация
+    exchange.is_deleted = True # Архивация (мягкое удаление)
     session.add(exchange)
     session.commit()
     return {"ok": True, "message": "Exchange request archived and reservations released"}
@@ -136,7 +165,9 @@ def delete_exchange(exchange_id: int, session: Session = Depends(get_session)) -
 # ЭНДПОИНТЫ ДЛЯ ОТЗЫВОВ
 
 @reviews_router.post("/", response_model=ReviewPublic)
-def create_review(review: ReviewCreate, session: Session = Depends(get_session)) -> ReviewPublic:
+def create_review(review: ReviewCreate, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)) -> ReviewPublic:
+    review.author_id = current_user.id
+
     # ЗАЩИТА БИЗНЕС-ЛОГИКИ: Валидация отзыва
     exchange = session.get(ExchangeRequest, review.exchange_id)
     if not exchange or exchange.is_deleted:
@@ -185,11 +216,14 @@ def read_review(review_id: int, session: Session = Depends(get_session)) -> Revi
     return review
 
 @reviews_router.patch("/{review_id}", response_model=ReviewPublic)
-def update_review(review_id: int, review_data: ReviewUpdate, session: Session = Depends(get_session)) -> ReviewPublic:
+def update_review(review_id: int, review_data: ReviewUpdate, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)) -> ReviewPublic:
     db_review = session.get(Review, review_id)
     if not db_review:
         raise HTTPException(status_code=404, detail="Review not found")
-        
+
+    if db_review.author_id != current_user.id and current_user.role != Role.admin:
+        raise HTTPException(status_code=403, detail="Not enough permissions to update this review")
+
     for key, value in review_data.model_dump(exclude_unset=True).items():
         setattr(db_review, key, value)
         
@@ -199,11 +233,14 @@ def update_review(review_id: int, review_data: ReviewUpdate, session: Session = 
     return db_review
 
 @reviews_router.delete("/{review_id}")
-def delete_review(review_id: int, session: Session = Depends(get_session)) -> dict:
+def delete_review(review_id: int, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)) -> dict:
     review = session.get(Review, review_id)
     if not review:
         raise HTTPException(status_code=404, detail="Review not found")
-    
+
+    if review.author_id != current_user.id and current_user.role != Role.admin:
+        raise HTTPException(status_code=403, detail="Not enough permissions to delete this review")
+
     # МЯГКОЕ УДАЛЕНИЕ - помечаем запись как удаленную, но не удаляем из базы данных
     review.is_deleted = True
     session.add(review)

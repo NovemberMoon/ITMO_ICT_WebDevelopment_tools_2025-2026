@@ -71,6 +71,10 @@ class UserUpdate(SQLModel):
     location_id: Optional[int] = None
     password: Optional[str] = None
 
+class UserChangePassword(SQLModel):
+    old_password: str
+    new_password: str
+
 class UserPublic(UserBase):
     id: int
     role: Role

@@ -10,7 +10,7 @@ from alembic import context
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), "src"))
 
 from sqlmodel import SQLModel
-from database import DB_URL
+from config import settings
 import models.links
 import models.users
 import models.books
@@ -20,7 +20,7 @@ import models.exchanges
 # access to the values within the .ini file in use.
 config = context.config
 
-config.set_main_option("sqlalchemy.url", DB_URL)
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

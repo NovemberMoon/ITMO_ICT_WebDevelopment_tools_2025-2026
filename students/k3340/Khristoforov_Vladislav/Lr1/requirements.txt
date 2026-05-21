@@ -3,3 +3,8 @@ uvicorn[standard]==0.46.0
 sqlmodel==0.0.38
 psycopg2-binary==2.9.12
 alembic==1.18.4
+passlib[bcrypt]==1.7.4
+bcrypt==3.2.2
+PyJWT==2.12.1
+python-multipart==0.0.27
+python-dotenv==1.2.2
