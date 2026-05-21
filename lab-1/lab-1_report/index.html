@@ -1,0 +1,1598 @@
+
+<!doctype html>
+<html lang="ru" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://NovemberMoon.github.io/ITMO_ICT_WebDevelopment_tools_2025-2026/lab-1/lab-1_report/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Отчет по лабораторной работе №1: "Реализация серверного приложения на FastAPI" - Лабораторные работы</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#no1-fastapi" class="md-skip">
+          Перейти к содержанию
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Верхний колонтитул">
+    <a href="../.." title="Лабораторные работы" class="md-header__button md-logo" aria-label="Лабораторные работы" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Лабораторные работы
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Отчет по лабораторной работе №1: "Реализация серверного приложения на FastAPI"
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="lime"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Поиск" placeholder="Поиск" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Поиск">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Очистить" aria-label="Очистить" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Инициализация поиска
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Вкладки" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Главная
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../lab_1_report.md" class="md-tabs__link">
+          
+  
+  
+  Лабораторная работа №1
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Навигация" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Лабораторные работы" class="md-nav__button md-logo" aria-label="Лабораторные работы" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Лабораторные работы
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Главная
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Лабораторная работа №1
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Лабораторная работа №1
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lab_1_report.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Отчет
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Введение и бизнес-логика проекта
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Введение и бизнес-логика проекта">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Бизнес-логика системы включает следующие аспекты:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Ссылки на артефакты разработки
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Архитектура и стек технологий
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-er-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Схема базы данных (ER-диаграмма)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Спецификация программного интерфейса (API)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Спецификация программного интерфейса (API)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-auth-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Аутентификация и пользователи (/auth, /users)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-books-genres" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Каталог книг и управление жанрами (/books, /genres)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-locations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Справочник локаций (/locations)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-exchanges-reviews" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Заявки на обмен и отзывы (/exchanges, /reviews)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5 Общие эндпоинты
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Исходный код конфигурации и подключения к базе данных
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Исходный код конфигурации и подключения к базе данных">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-srcconfigpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Конфигурация (src/config.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-srcdatabasepy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Подключение к базе данных (src/database.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-sqlmodel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Финальные модели данных (SQLModel)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Финальные модели данных (SQLModel)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-many-to-many-srcmodelslinkspy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Промежуточные связи Many-to-Many (src/models/links.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-srcmodelsbookspy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Сущность Книги и Жанры (src/models/books.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-srcmodelsexchangespy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Сущность Сделок и Отзывов (src/models/exchanges.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#64-srcmodelsuserspy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4 Сущность Пользователей и Локаций (src/models/users.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Инструкция по локальному развертыванию
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Заключение
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="no1-fastapi">Отчет по лабораторной работе №1: "Реализация серверного приложения на FastAPI"</h1>
+<p><strong>Дисциплина:</strong> Web-программирование</p>
+<p><strong>Тема проекта:</strong> Веб-приложение для буккроссинга (Bookcrossing)</p>
+<p><strong>Студент:</strong> Христофоров Владислав Николаевич, WEB 2.1</p>
+<h2 id="1-">1. Введение и бизнес-логика проекта</h2>
+<p>Данный документ представляет собой технический отчет и сопроводительную документацию к серверному приложению (API) для платформы обмена книгами — буккроссинга. Система спроектирована с целью предоставить пользователям удобный и безопасный инструмент для учета личных библиотек, поиска книг по географическому признаку и жанрам, а также для автоматизированного проведения сделок обмена.</p>
+<h3 id="-">Бизнес-логика системы включает следующие аспекты:</h3>
+<ul>
+<li><strong>Идентификация физических книг:</strong> Каждая книга привязывается к уникальному коду буккроссинга (BCID), что позволяет отслеживать конкретный перемещающийся экземпляр, а не абстрактное издание.</li>
+<li><strong>Справочники:</strong> Города (локации) и жанры представляют собой глобальные справочники, ведение которых доверено исключительно администраторам для предотвращения дублирования данных.</li>
+<li><strong>Система заявок на обмен:</strong> Заявка связывает отправителя, запрашиваемую книгу и опционально предлагаемую взамен книгу. Принятие заявки (статус ACCEPTED) временно блокирует доступность обеих книг для других участников, а успешное завершение сделки (COMPLETED) автоматически переписывает владельца книги в системе.</li>
+<li><strong>Безопасность и ролевой доступ (RBAC):</strong> Пользователи делятся на обычных (user) и администраторов (admin). Обычные пользователи могут управлять только собственным контентом (своими книгами, вишлистом, профилем). Администраторы обладают привилегиями обхода ограничений (могут изменять любые профили, книги, обмены и справочники).</li>
+<li><strong>Мягкое удаление (Soft Delete):</strong> Удаление пользователей, книг, отзывов и заявок не приводит к каскадному разрушению связей в БД. Сущности помечаются флагом is_deleted (или is_active=False), скрываясь из выдачи каталога, но сохраняя целостность истории обменов.</li>
+</ul>
+<h3 id="11">1.1 Ссылки на артефакты разработки</h3>
+<p>Разработка проекта велась итеративно в системе контроля версий Git. Ниже представлены ссылки на ключевые вехи реализации:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Этап разработки</th>
+<th style="text-align: left;">Описание</th>
+<th style="text-align: left;">Ссылка на репозиторий / коммит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Основной репозиторий</strong></td>
+<td style="text-align: left;">Исходный код всей серверной части</td>
+<td style="text-align: left;"><a href="https://github.com/NovemberMoon/ITMO_ICT_WebDevelopment_tools_2025-2026/tree/lab-1">GitHub Repository</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Практическая работа 1.1</strong></td>
+<td style="text-align: left;">Разработка Pydantic-моделей и временного API в оперативной памяти</td>
+<td style="text-align: left;"><a href="https://github.com/NovemberMoon/ITMO_ICT_WebDevelopment_tools_2025-2026/commit/482a9b08c98ece34f0b6b4c0c792cd05abceed7e">Коммит Практики 1.1</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Практическая работа 1.2</strong></td>
+<td style="text-align: left;">Интеграция SQLModel, описание реляционных связей M:M</td>
+<td style="text-align: left;"><a href="https://github.com/NovemberMoon/ITMO_ICT_WebDevelopment_tools_2025-2026/commit/4e78fc55d78ffeb6e3d70f9fb45c218a13e6dcbd">Коммит Практики 1.2</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Практическая работа 1.3</strong></td>
+<td style="text-align: left;">Интеграция Alembic, версионирование схемы БД и чтение конфигураций</td>
+<td style="text-align: left;"><a href="https://github.com/NovemberMoon/ITMO_ICT_WebDevelopment_tools_2025-2026/commit/08b4837fc23d999b582791aa329c18861b43d924">Коммит Практики 1.3</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Финальная версия</strong></td>
+<td style="text-align: left;">Реализация JWT, замков безопасности (RBAC) и смены паролей</td>
+<td style="text-align: left;"><a href="https://github.com/NovemberMoon/ITMO_ICT_WebDevelopment_tools_2025-2026/commit/bdc88df416937d669419f142b720f7acb3626799">Коммит Финальной версии</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="2">2. Архитектура и стек технологий</h2>
+<p>Программное решение спроектировано по модульному принципу, разделяя доменные модели, логику подключения к базе данных, сквозную безопасность и конечные точки API.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Компонент</th>
+<th style="text-align: left;">Технология</th>
+<th style="text-align: left;">Роль и назначение в архитектуре</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Web-Фреймворк</strong></td>
+<td style="text-align: left;">FastAPI (v0.136.1)</td>
+<td style="text-align: left;">Асинхронная обработка HTTP-запросов, валидация входящих структур данных, генерация OpenAPI спецификации.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>СУБД</strong></td>
+<td style="text-align: left;">PostgreSQL</td>
+<td style="text-align: left;">Хранение реляционных структурированных данных приложения.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>ORM / Схемы</strong></td>
+<td style="text-align: left;">SQLModel (v0.0.38)</td>
+<td style="text-align: left;">Единое описание таблиц базы данных и схем валидации Pydantic, исключающее дублирование описания полей.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Миграции</strong></td>
+<td style="text-align: left;">Alembic (v1.18.4)</td>
+<td style="text-align: left;">Автоматическая генерация и накат изменений структуры БД.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Безопасность</strong></td>
+<td style="text-align: left;">passlib (bcrypt v3.2.2), PyJWT (v2.12.1)</td>
+<td style="text-align: left;">Хеширование паролей пользователей (алгоритм bcrypt), выпуск и валидация JWT токенов доступа.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-er-">3. Схема базы данных (ER-диаграмма)</h2>
+<p>Реляционная модель состоит из 9 таблиц. На диаграмме отражены связи между сущностями, включая промежуточные таблицы связей «многие-ко-многим» (M:M):</p>
+<p>```mermaid
+erDiagram
+    USER ||--o| LOCATION : "проживает в"
+    USER ||--o{ BOOK : "владеет"
+    USER ||--o{ EXCHANGE_REQUEST : "инициирует обмен"
+    BOOK ||--o{ EXCHANGE_REQUEST : "участвует как цель"
+    USER ||--o{ REVIEW : "получает/оставляет"</p>
+<pre><code>USER ||--o{ USER_GENRE_LINK : "выражает интерес"
+GENRE ||--o{ USER_GENRE_LINK : ""
+
+BOOK ||--o{ BOOK_GENRE_LINK : "классифицируется по"
+GENRE ||--o{ BOOK_GENRE_LINK : ""
+
+USER ||--o{ WISHLIST_LINK : "добавляет в избранное"
+BOOK ||--o{ WISHLIST_LINK : ""
+
+USER {
+    int id PK
+    string username
+    string email
+    string hashed_password
+    string first_name
+    string last_name
+    string bio
+    string role
+    boolean is_active
+    int location_id FK
+}
+LOCATION {
+    int id PK
+    string country
+    string city
+    string address
+}
+BOOK {
+    int id PK
+    string bcid
+    string title
+    string author
+    int publication_year
+    string isbn
+    boolean is_available
+    int owner_id FK
+    boolean is_deleted
+}
+GENRE {
+    int id PK
+    string name
+    string description
+}
+EXCHANGE_REQUEST {
+    int id PK
+    int requester_id FK
+    int requested_book_id FK
+    int offered_book_id FK
+    string status
+    string comment
+    string tracking_info
+    boolean is_deleted
+}
+REVIEW {
+    int id PK
+    int author_id FK
+    int target_user_id FK
+    int exchange_id FK
+    int rating
+    string text
+    boolean is_deleted
+}
+USER_GENRE_LINK {
+    int user_id FK
+    int genre_id FK
+    int preference_level "Дополнительное поле"
+}
+BOOK_GENRE_LINK {
+    int book_id FK
+    int genre_id FK
+    boolean is_primary "Дополнительное поле"
+}
+WISHLIST_LINK {
+    int user_id FK
+    int book_id FK
+    datetime created_at "Дополнительное поле"
+}
+</code></pre>
+<p>```</p>
+<h2 id="4-api">4. Спецификация программного интерфейса (API)</h2>
+<p>Все реализованные 44 эндпоинта (за исключением корневого эндпоинта /) разделены на специализированные контроллеры (роутеры) со строгим разграничением прав доступа.</p>
+<h3 id="41-auth-users">4.1 Аутентификация и пользователи (/auth, /users)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Метод</th>
+<th style="text-align: left;">Эндпоинт</th>
+<th style="text-align: left;">Назначение операции</th>
+<th style="text-align: left;">Доступ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">POST</td>
+<td style="text-align: left;">/auth/register</td>
+<td style="text-align: left;">Регистрация нового аккаунта (пароль хешируется)</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+<tr>
+<td style="text-align: left;">POST</td>
+<td style="text-align: left;">/auth/login</td>
+<td style="text-align: left;">Аутентификация пользователя (выдача Bearer JWT-токена)</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/users/me</td>
+<td style="text-align: left;">Получение профиля текущего авторизованного пользователя</td>
+<td style="text-align: left;">Авторизованный</td>
+</tr>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/users/</td>
+<td style="text-align: left;">Получение списка всех активных (не забаненных) пользователей</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/users/{id}</td>
+<td style="text-align: left;">Получение подробного профиля пользователя с его локацией</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+<tr>
+<td style="text-align: left;">PATCH</td>
+<td style="text-align: left;">/users/{id}</td>
+<td style="text-align: left;">Частичное обновление данных профиля</td>
+<td style="text-align: left;">Владелец / Админ</td>
+</tr>
+<tr>
+<td style="text-align: left;">DELETE</td>
+<td style="text-align: left;">/users/{id}</td>
+<td style="text-align: left;">Бан/удаление пользователя (установка is_active=False)</td>
+<td style="text-align: left;">Админ</td>
+</tr>
+<tr>
+<td style="text-align: left;">POST</td>
+<td style="text-align: left;">/users/{id}/password</td>
+<td style="text-align: left;">Смена пароля с обязательной сверкой старого пароля</td>
+<td style="text-align: left;">Владелец / Admin</td>
+</tr>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/users/{id}/wishlist</td>
+<td style="text-align: left;">Просмотр списка избранных книг (вишлиста) пользователя</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+<tr>
+<td style="text-align: left;">POST</td>
+<td style="text-align: left;">/users/{id}/wishlist/{book_id}</td>
+<td style="text-align: left;">Добавление книги в вишлист пользователя</td>
+<td style="text-align: left;">Владелец / Админ</td>
+</tr>
+<tr>
+<td style="text-align: left;">DELETE</td>
+<td style="text-align: left;">/users/{id}/wishlist/{book_id}</td>
+<td style="text-align: left;">Удаление книги из вишлиста</td>
+<td style="text-align: left;">Владелец / Админ</td>
+</tr>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/users/{id}/genres</td>
+<td style="text-align: left;">Просмотр читательских интересов (жанров) пользователя</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+<tr>
+<td style="text-align: left;">POST</td>
+<td style="text-align: left;">/users/{id}/genres/{genre_id}</td>
+<td style="text-align: left;">Добавление жанра в список интересов пользователя</td>
+<td style="text-align: left;">Владелец / Админ</td>
+</tr>
+<tr>
+<td style="text-align: left;">DELETE</td>
+<td style="text-align: left;">/users/{id}/genres/{genre_id}</td>
+<td style="text-align: left;">Удаление жанра из интересов</td>
+<td style="text-align: left;">Владелец / Админ</td>
+</tr>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/users/{id}/books</td>
+<td style="text-align: left;">Просмотр списка всех книг конкретного пользователя</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/users/{id}/exchanges</td>
+<td style="text-align: left;">История поданных и полученных пользователем обменов</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/users/{id}/reviews</td>
+<td style="text-align: left;">Просмотр всех отзывов, оставленных о пользователе</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-books-genres">4.2 Каталог книг и управление жанрами (/books, /genres)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Метод</th>
+<th style="text-align: left;">Эндпоинт</th>
+<th style="text-align: left;">Назначение операции</th>
+<th style="text-align: left;">Доступ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/books/</td>
+<td style="text-align: left;">Список книг с фильтрами по доступности, поиску, жанру и городу</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/books/{id}</td>
+<td style="text-align: left;">Детальная информация о книге по ее ID</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/books/bcid/{bcid}</td>
+<td style="text-align: left;">Поиск книги по уникальному коду буккроссинга (BCID)</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+<tr>
+<td style="text-align: left;">POST</td>
+<td style="text-align: left;">/books/</td>
+<td style="text-align: left;">Регистрация книги в системе (владельцем становится текущий юзер)</td>
+<td style="text-align: left;">Авторизованный</td>
+</tr>
+<tr>
+<td style="text-align: left;">PATCH</td>
+<td style="text-align: left;">/books/{id}</td>
+<td style="text-align: left;">Обновление информации о книге</td>
+<td style="text-align: left;">Владелец / Админ</td>
+</tr>
+<tr>
+<td style="text-align: left;">DELETE</td>
+<td style="text-align: left;">/books/{id}</td>
+<td style="text-align: left;">Мягкое удаление книги из каталога (is_deleted=True)</td>
+<td style="text-align: left;">Владелец / Admin</td>
+</tr>
+<tr>
+<td style="text-align: left;">POST</td>
+<td style="text-align: left;">/books/{id}/genres/{genre_id}</td>
+<td style="text-align: left;">Связывание книги с определенным жанром (M:M)</td>
+<td style="text-align: left;">Владелец / Админ</td>
+</tr>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/genres/</td>
+<td style="text-align: left;">Получение справочника всех доступных жанров</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/genres/{genre_id}</td>
+<td style="text-align: left;">Детальный просмотр жанра по ID</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+<tr>
+<td style="text-align: left;">POST</td>
+<td style="text-align: left;">/genres/</td>
+<td style="text-align: left;">Создание новой жанровой категории</td>
+<td style="text-align: left;">Админ</td>
+</tr>
+<tr>
+<td style="text-align: left;">PATCH</td>
+<td style="text-align: left;">/genres/{genre_id}</td>
+<td style="text-align: left;">Обновление информации о жанре</td>
+<td style="text-align: left;">Админ</td>
+</tr>
+<tr>
+<td style="text-align: left;">DELETE</td>
+<td style="text-align: left;">/genres/{genre_id}</td>
+<td style="text-align: left;">Удаление жанра из справочника</td>
+<td style="text-align: left;">Админ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43-locations">4.3 Справочник локаций (/locations)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Метод</th>
+<th style="text-align: left;">Эндпоинт</th>
+<th style="text-align: left;">Назначение операции</th>
+<th style="text-align: left;">Доступ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/locations/</td>
+<td style="text-align: left;">Получение списка всех доступных локаций</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/locations/{location_id}</td>
+<td style="text-align: left;">Получение информации о локации по ID</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+<tr>
+<td style="text-align: left;">POST</td>
+<td style="text-align: left;">/locations/</td>
+<td style="text-align: left;">Добавление новой локации (города/страны) в справочник</td>
+<td style="text-align: left;">Админ</td>
+</tr>
+<tr>
+<td style="text-align: left;">PATCH</td>
+<td style="text-align: left;">/locations/{location_id}</td>
+<td style="text-align: left;">Обновление данных локации</td>
+<td style="text-align: left;">Админ</td>
+</tr>
+<tr>
+<td style="text-align: left;">DELETE</td>
+<td style="text-align: left;">/locations/{location_id}</td>
+<td style="text-align: left;">Удаление локации из справочника</td>
+<td style="text-align: left;">Админ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="44-exchanges-reviews">4.4 Заявки на обмен и отзывы (/exchanges, /reviews)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Метод</th>
+<th style="text-align: left;">Эндпоинт</th>
+<th style="text-align: left;">Назначение операции</th>
+<th style="text-align: left;">Доступ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">POST</td>
+<td style="text-align: left;">/exchanges/</td>
+<td style="text-align: left;">Инициация заявки на обмен. Инициатор берется из токена</td>
+<td style="text-align: left;">Авторизованный</td>
+</tr>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/exchanges/</td>
+<td style="text-align: left;">Получение списка активных заявок на обмен в системе</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/exchanges/{id}</td>
+<td style="text-align: left;">Детальный просмотр заявки на обмен по ID</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+<tr>
+<td style="text-align: left;">PATCH</td>
+<td style="text-align: left;">/exchanges/{id}</td>
+<td style="text-align: left;">Обработка заявки (Одобрение ACCEPTED / Отмена REJECTED / Завершение COMPLETED)</td>
+<td style="text-align: left;">Участник сделки / Админ</td>
+</tr>
+<tr>
+<td style="text-align: left;">DELETE</td>
+<td style="text-align: left;">/exchanges/{id}</td>
+<td style="text-align: left;">Отмена/архивация заявки с освобождением забронированных книг</td>
+<td style="text-align: left;">Инициатор / Админ</td>
+</tr>
+<tr>
+<td style="text-align: left;">POST</td>
+<td style="text-align: left;">/reviews/</td>
+<td style="text-align: left;">Оставить отзыв о завершенном обмене (с валидацией участия)</td>
+<td style="text-align: left;">Участник сделки</td>
+</tr>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/reviews/</td>
+<td style="text-align: left;">Просмотр всех неудаленных отзывов</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/reviews/{review_id}</td>
+<td style="text-align: left;">Получение конкретного отзыва по ID</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+<tr>
+<td style="text-align: left;">PATCH</td>
+<td style="text-align: left;">/reviews/{review_id}</td>
+<td style="text-align: left;">Редактирование текста или оценки отзыва</td>
+<td style="text-align: left;">Автор отзыва</td>
+</tr>
+<tr>
+<td style="text-align: left;">DELETE</td>
+<td style="text-align: left;">/reviews/{review_id}</td>
+<td style="text-align: left;">Мягкое удаление отзыва (is_deleted=True)</td>
+<td style="text-align: left;">Автор отзыва</td>
+</tr>
+</tbody>
+</table>
+<h3 id="45">4.5 Общие эндпоинты</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Метод</th>
+<th style="text-align: left;">Эндпоинт</th>
+<th style="text-align: left;">Назначение операции</th>
+<th style="text-align: left;">Доступ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">/</td>
+<td style="text-align: left;">Вывод приветственного сообщения и ссылки на Swagger UI</td>
+<td style="text-align: left;">Анонимно</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5">5. Исходный код конфигурации и подключения к базе данных</h2>
+<p>Ниже представлены финальные исходные файлы, реализующие конфигурационные параметры и инициализацию сессии базы данных.</p>
+<h3 id="51-srcconfigpy">5.1 Конфигурация (src/config.py)</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Settings</span><span class="p">:</span>
+    <span class="c1"># База данных</span>
+    <span class="n">DATABASE_URL</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DB_URL&quot;</span><span class="p">,</span> <span class="s2">&quot;sqlite:///./bookcrossing.db&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Безопасность и JWT</span>
+    <span class="n">SECRET_KEY</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SECRET_KEY&quot;</span><span class="p">,</span> <span class="s2">&quot;super-secret-key-for-bookcrossing-lab1&quot;</span><span class="p">)</span>
+    <span class="n">ALGORITHM</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;ALGORITHM&quot;</span><span class="p">,</span> <span class="s2">&quot;HS256&quot;</span><span class="p">)</span>
+    <span class="n">ACCESS_TOKEN_EXPIRE_MINUTES</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;ACCESS_TOKEN_EXPIRE_MINUTES&quot;</span><span class="p">,</span> <span class="s2">&quot;30&quot;</span><span class="p">))</span>
+
+<span class="c1"># Создаем глобальный объект настроек</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="52-srcdatabasepy">5.2 Подключение к базе данных (src/database.py)</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">Session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">config</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
+
+<span class="c1"># Если используем SQLite, нужен специальный аргумент. Для Postgres он вызывает ошибку.</span>
+<span class="n">connect_args</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;check_same_thread&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span> <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">DATABASE_URL</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;sqlite&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
+
+<span class="c1"># Создаем подключение к БД с правильными аргументами</span>
+<span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">DATABASE_URL</span><span class="p">,</span> <span class="n">connect_args</span><span class="o">=</span><span class="n">connect_args</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_session</span><span class="p">():</span>
+    <span class="k">with</span> <span class="n">Session</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">session</span>
+</code></pre></div>
+<h2 id="6-sqlmodel">6. Финальные модели данных (SQLModel)</h2>
+<p>Описание схем и таблиц базы данных разделено на изолированные доменные модули.</p>
+<h3 id="61-many-to-many-srcmodelslinkspy">6.1 Промежуточные связи Many-to-Many (src/models/links.py)</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLModel</span><span class="p">,</span> <span class="n">Field</span>
+
+<span class="c1"># Связь Пользователь - Жанр</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UserGenreLink</span><span class="p">(</span><span class="n">SQLModel</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;user_genre&quot;</span>
+    <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">foreign_key</span><span class="o">=</span><span class="s2">&quot;user.id&quot;</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">genre_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">foreign_key</span><span class="o">=</span><span class="s2">&quot;genre.id&quot;</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">preference_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Уровень интереса от 1 до 5&quot;</span><span class="p">)</span>
+
+<span class="c1"># Связь Книга - Жанр</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BookGenreLink</span><span class="p">(</span><span class="n">SQLModel</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;book_genre&quot;</span>
+    <span class="n">book_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">foreign_key</span><span class="o">=</span><span class="s2">&quot;book.id&quot;</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">genre_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">foreign_key</span><span class="o">=</span><span class="s2">&quot;genre.id&quot;</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">is_primary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Основной жанр книги&quot;</span><span class="p">)</span>
+
+<span class="c1"># Избранное</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WishlistLink</span><span class="p">(</span><span class="n">SQLModel</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;wishlist&quot;</span>
+    <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">foreign_key</span><span class="o">=</span><span class="s2">&quot;user.id&quot;</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">book_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">foreign_key</span><span class="o">=</span><span class="s2">&quot;book.id&quot;</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="62-srcmodelsbookspy">6.2 Сущность Книги и Жанры (src/models/books.py)</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLModel</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">Relationship</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.links</span><span class="w"> </span><span class="kn">import</span> <span class="n">BookGenreLink</span><span class="p">,</span> <span class="n">UserGenreLink</span><span class="p">,</span> <span class="n">WishlistLink</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.users</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BookCondition</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+    <span class="n">NEW</span> <span class="o">=</span> <span class="s2">&quot;new&quot;</span>
+    <span class="n">GOOD</span> <span class="o">=</span> <span class="s2">&quot;good&quot;</span>
+    <span class="n">WORN</span> <span class="o">=</span> <span class="s2">&quot;worn&quot;</span>
+    <span class="n">POOR</span> <span class="o">=</span> <span class="s2">&quot;poor&quot;</span>
+
+<span class="c1"># --- ЖАНРЫ ---</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GenreBase</span><span class="p">(</span><span class="n">SQLModel</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Genre</span><span class="p">(</span><span class="n">GenreBase</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">books</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Book&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;genres&quot;</span><span class="p">,</span> <span class="n">link_model</span><span class="o">=</span><span class="n">BookGenreLink</span><span class="p">)</span>
+    <span class="n">users</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;User&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;genres&quot;</span><span class="p">,</span> <span class="n">link_model</span><span class="o">=</span><span class="n">UserGenreLink</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">GenreCreate</span><span class="p">(</span><span class="n">GenreBase</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">GenreUpdate</span><span class="p">(</span><span class="n">SQLModel</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">GenrePublic</span><span class="p">(</span><span class="n">GenreBase</span><span class="p">):</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+
+<span class="c1"># --- КНИГИ ---</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BookBase</span><span class="p">(</span><span class="n">SQLModel</span><span class="p">):</span>
+    <span class="n">bcid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">author</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">publication_year</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">isbn</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">cover_url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">condition</span><span class="p">:</span> <span class="n">BookCondition</span>
+    <span class="n">language</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">is_available</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">owner_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">foreign_key</span><span class="o">=</span><span class="s2">&quot;user.id&quot;</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Book</span><span class="p">(</span><span class="n">BookBase</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Системные поля</span>
+    <span class="n">is_deleted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">)</span>
+    <span class="n">updated_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">)</span>
+
+    <span class="n">owner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;User&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;books&quot;</span><span class="p">)</span>
+    <span class="n">genres</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Genre</span><span class="p">]</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;books&quot;</span><span class="p">,</span> <span class="n">link_model</span><span class="o">=</span><span class="n">BookGenreLink</span><span class="p">)</span>
+    <span class="n">wishlisted_by</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;User&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;wishlisted_books&quot;</span><span class="p">,</span> <span class="n">link_model</span><span class="o">=</span><span class="n">WishlistLink</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BookCreate</span><span class="p">(</span><span class="n">BookBase</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BookUpdate</span><span class="p">(</span><span class="n">SQLModel</span><span class="p">):</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">author</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">publication_year</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">cover_url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">condition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BookCondition</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">is_available</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BookPublic</span><span class="p">(</span><span class="n">BookBase</span><span class="p">):</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">is_deleted</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span>
+
+<span class="c1"># Вложенное отображение</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BookPublicWithGenres</span><span class="p">(</span><span class="n">BookPublic</span><span class="p">):</span>
+    <span class="n">genres</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">GenrePublic</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</code></pre></div>
+<h3 id="63-srcmodelsexchangespy">6.3 Сущность Сделок и Отзывов (src/models/exchanges.py)</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLModel</span><span class="p">,</span> <span class="n">Field</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ExchangeStatus</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+    <span class="n">PENDING</span> <span class="o">=</span> <span class="s2">&quot;pending&quot;</span>
+    <span class="n">ACCEPTED</span> <span class="o">=</span> <span class="s2">&quot;accepted&quot;</span>
+    <span class="n">REJECTED</span> <span class="o">=</span> <span class="s2">&quot;rejected&quot;</span>
+    <span class="n">COMPLETED</span> <span class="o">=</span> <span class="s2">&quot;completed&quot;</span>
+
+<span class="c1"># --- ОБМЕНЫ ---</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ExchangeRequestBase</span><span class="p">(</span><span class="n">SQLModel</span><span class="p">):</span>
+    <span class="n">requester_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">foreign_key</span><span class="o">=</span><span class="s2">&quot;user.id&quot;</span><span class="p">)</span>
+    <span class="n">requested_book_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">foreign_key</span><span class="o">=</span><span class="s2">&quot;book.id&quot;</span><span class="p">)</span>
+    <span class="n">offered_book_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">foreign_key</span><span class="o">=</span><span class="s2">&quot;book.id&quot;</span><span class="p">)</span>
+    <span class="n">comment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">tracking_info</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ExchangeRequest</span><span class="p">(</span><span class="n">ExchangeRequestBase</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;exchange_request&quot;</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Системные поля</span>
+    <span class="n">status</span><span class="p">:</span> <span class="n">ExchangeStatus</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">ExchangeStatus</span><span class="o">.</span><span class="n">PENDING</span><span class="p">)</span>
+    <span class="n">is_deleted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">)</span>
+    <span class="n">updated_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">)</span>
+    <span class="n">completed_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ExchangeRequestCreate</span><span class="p">(</span><span class="n">ExchangeRequestBase</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ExchangeRequestUpdate</span><span class="p">(</span><span class="n">SQLModel</span><span class="p">):</span>
+    <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExchangeStatus</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">comment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">tracking_info</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">completed_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ExchangeRequestPublic</span><span class="p">(</span><span class="n">ExchangeRequestBase</span><span class="p">):</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">status</span><span class="p">:</span> <span class="n">ExchangeStatus</span>
+    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span>
+    <span class="n">completed_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span>
+
+<span class="c1"># --- ОТЗЫВЫ ---</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReviewBase</span><span class="p">(</span><span class="n">SQLModel</span><span class="p">):</span>
+    <span class="n">author_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">foreign_key</span><span class="o">=</span><span class="s2">&quot;user.id&quot;</span><span class="p">)</span>
+    <span class="n">target_user_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">foreign_key</span><span class="o">=</span><span class="s2">&quot;user.id&quot;</span><span class="p">)</span>
+    <span class="n">exchange_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">foreign_key</span><span class="o">=</span><span class="s2">&quot;exchange_request.id&quot;</span><span class="p">)</span>
+    <span class="n">rating</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">text</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Review</span><span class="p">(</span><span class="n">ReviewBase</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">is_deleted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">)</span>
+    <span class="n">updated_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ReviewCreate</span><span class="p">(</span><span class="n">ReviewBase</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ReviewUpdate</span><span class="p">(</span><span class="n">SQLModel</span><span class="p">):</span>
+    <span class="n">rating</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">text</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ReviewPublic</span><span class="p">(</span><span class="n">ReviewBase</span><span class="p">):</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span>
+</code></pre></div>
+<h3 id="64-srcmodelsuserspy">6.4 Сущность Пользователей и Локаций (src/models/users.py)</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLModel</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">Relationship</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.links</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserGenreLink</span><span class="p">,</span> <span class="n">WishlistLink</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.books</span><span class="w"> </span><span class="kn">import</span> <span class="n">Book</span><span class="p">,</span> <span class="n">Genre</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Role</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+    <span class="n">admin</span> <span class="o">=</span> <span class="s2">&quot;admin&quot;</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="s2">&quot;user&quot;</span>
+
+<span class="c1"># --- ЛОКАЦИИ ---</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LocationBase</span><span class="p">(</span><span class="n">SQLModel</span><span class="p">):</span>
+    <span class="n">country</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">city</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">address</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Location</span><span class="p">(</span><span class="n">LocationBase</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">users</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;User&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;location&quot;</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">LocationCreate</span><span class="p">(</span><span class="n">LocationBase</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">LocationUpdate</span><span class="p">(</span><span class="n">SQLModel</span><span class="p">):</span>
+    <span class="n">country</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">city</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">address</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">LocationPublic</span><span class="p">(</span><span class="n">LocationBase</span><span class="p">):</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+
+<span class="c1"># --- ПОЛЬЗОВАТЕЛИ ---</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UserBase</span><span class="p">(</span><span class="n">SQLModel</span><span class="p">):</span>
+    <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">email</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">first_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">last_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">bio</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">avatar_url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">location_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">foreign_key</span><span class="o">=</span><span class="s2">&quot;location.id&quot;</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">User</span><span class="p">(</span><span class="n">UserBase</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">hashed_password</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">role</span><span class="p">:</span> <span class="n">Role</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">Role</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+    <span class="n">is_active</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Location</span><span class="p">]</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;users&quot;</span><span class="p">)</span>
+    <span class="n">books</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Book&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;owner&quot;</span><span class="p">)</span>
+    <span class="n">genres</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Genre&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;users&quot;</span><span class="p">,</span> <span class="n">link_model</span><span class="o">=</span><span class="n">UserGenreLink</span><span class="p">)</span>
+    <span class="n">wishlisted_books</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Book&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;wishlisted_by&quot;</span><span class="p">,</span> <span class="n">link_model</span><span class="o">=</span><span class="n">WishlistLink</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">UserCreate</span><span class="p">(</span><span class="n">UserBase</span><span class="p">):</span>
+    <span class="n">password</span><span class="p">:</span> <span class="nb">str</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">UserChangePassword</span><span class="p">(</span><span class="n">SQLModel</span><span class="p">):</span>
+    <span class="n">old_password</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">new_password</span><span class="p">:</span> <span class="nb">str</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">UserUpdate</span><span class="p">(</span><span class="n">SQLModel</span><span class="p">):</span>
+    <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">first_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">last_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">bio</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">avatar_url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">location_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">UserPublic</span><span class="p">(</span><span class="n">UserBase</span><span class="p">):</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">role</span><span class="p">:</span> <span class="n">Role</span>
+    <span class="n">is_active</span><span class="p">:</span> <span class="nb">bool</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">UserPublicWithLocation</span><span class="p">(</span><span class="n">UserPublic</span><span class="p">):</span>
+    <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LocationPublic</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div>
+<h2 id="7">7. Инструкция по локальному развертыванию</h2>
+<p>Для локального запуска и проверки работоспособности выполните следующие шаги:</p>
+<ol>
+<li>
+<p><strong>Клонирование проекта и настройка виртуального окружения:</strong></p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span><span class="o">[</span>https://github.com/<span class="o">](</span>https://github.com/<span class="o">)[</span>ЛОГИН<span class="o">]</span>/<span class="o">[</span>РЕПОЗИТОРИЙ<span class="o">]</span>.git
+<span class="nb">cd</span><span class="w"> </span><span class="o">[</span>ПАПКА_ПРОЕКТА<span class="o">]</span>
+python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate<span class="w">  </span><span class="c1"># Для Linux/MacOS</span>
+<span class="c1"># venv\Scripts\activate  # Для Windows</span>
+</code></pre></div>
+</li>
+<li>
+<p><strong>Установка зависимостей:</strong></p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</code></pre></div>
+</li>
+<li>
+<p><strong>Конфигурация переменных окружения:</strong></p>
+<p>Создайте в корне файл .env:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">DB_URL</span><span class="o">=</span>postgresql://postgres:password@localhost:5432/bookcrossing_db
+<span class="nv">SECRET_KEY</span><span class="o">=</span>your_secure_secret_key_string
+<span class="nv">ALGORITHM</span><span class="o">=</span>HS256
+</code></pre></div>
+</li>
+<li>
+<p><strong>Применение миграций схемы к PostgreSQL:</strong></p>
+<div class="highlight"><pre><span></span><code>alembic<span class="w"> </span>upgrade<span class="w"> </span>head
+</code></pre></div>
+</li>
+<li>
+<p><strong>Запуск локального сервера:</strong>
+    <div class="highlight"><pre><span></span><code>uvicorn<span class="w"> </span>src.main:app<span class="w"> </span>--reload
+</code></pre></div></p>
+</li>
+</ol>
+<p>Сервер запустится по адресу <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a>, а интерактивная спецификация эндпоинтов станет доступна в панели <a href="http://127.0.0.1:8000/docs">http://127.0.0.1:8000/docs</a>.</p>
+<h2 id="8">8. Заключение</h2>
+<p>В рамках выполнения лабораторной работы №1 было успешно спроектировано и реализовано серверное приложение. Были освоены современные практики построения быстрых API-интерфейсов на фреймворке FastAPI, организации реляционного хранения данных с помощью библиотеки декларативного описания моделей SQLModel (надстройка над SQLAlchemy), а также принципы развертывания миграций баз данных с помощью Alembic. Интеграция JWT-авторизации позволила гибко настроить разграничение прав доступа и защитить ключевые бизнес-процессы системы обмена книгами.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  К началу
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "toc.follow", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
