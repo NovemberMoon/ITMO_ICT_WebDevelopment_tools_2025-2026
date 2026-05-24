@@ -1090,20 +1090,18 @@
 <p>Реляционная модель состоит из 9 таблиц. На диаграмме отражены связи между сущностями, включая промежуточные таблицы связей «многие-ко-многим» (M:M):</p>
 <pre class="mermaid"><code>
 erDiagram
-    USER ||--o| LOCATION : "проживает в"
+    LOCATION ||--o{ USER : "проживает"
     USER ||--o{ BOOK : "владеет"
-    USER ||--o{ EXCHANGE_REQUEST : "инициирует обмен"
-    BOOK ||--o{ EXCHANGE_REQUEST : "участвует как цель"
-    USER ||--o{ REVIEW : "получает/оставляет"
-
-    USER ||--o{ USER_GENRE_LINK : "выражает интерес"
-    GENRE ||--o{ USER_GENRE_LINK : ""
-
-    BOOK ||--o{ BOOK_GENRE_LINK : "классифицируется по"
-    GENRE ||--o{ BOOK_GENRE_LINK : ""
-
-    USER ||--o{ WISHLIST_LINK : "добавляет в избранное"
-    BOOK ||--o{ WISHLIST_LINK : ""
+    BOOK ||--o{ BOOK_GENRE_LINK : "имеет"
+    BOOK_GENRE_LINK }o--|| GENRE : "ссылается"
+    USER ||--o{ USER_GENRE_LINK : "выбирает"
+    USER_GENRE_LINK }o--|| GENRE : "ссылается"
+    USER ||--o{ WISHLIST_LINK : "желает"
+    WISHLIST_LINK }o--|| BOOK : "содержит"
+    USER ||--o{ EXCHANGE_REQUEST : "инициирует"
+    BOOK ||--o{ EXCHANGE_REQUEST : "запрашивается"
+    USER ||--o{ REVIEW : "получает"
+    EXCHANGE_REQUEST ||--o| REVIEW : "оценивается"
 
     USER {
         int id PK
@@ -1113,9 +1111,12 @@ erDiagram
         string first_name
         string last_name
         string bio
+        string avatar_url
         string role
         boolean is_active
         int location_id FK
+        datetime created_at
+        datetime updated_at
     }
     LOCATION {
         int id PK
@@ -1130,9 +1131,15 @@ erDiagram
         string author
         int publication_year
         string isbn
+        string description
+        string cover_url
+        string condition
+        string language
         boolean is_available
         int owner_id FK
         boolean is_deleted
+        datetime created_at
+        datetime updated_at
     }
     GENRE {
         int id PK
@@ -1148,6 +1155,9 @@ erDiagram
         string comment
         string tracking_info
         boolean is_deleted
+        datetime created_at
+        datetime updated_at
+        datetime completed_at
     }
     REVIEW {
         int id PK
@@ -1157,21 +1167,23 @@ erDiagram
         int rating
         string text
         boolean is_deleted
+        datetime created_at
+        datetime updated_at
     }
     USER_GENRE_LINK {
-        int user_id FK
-        int genre_id FK
-        int preference_level "Дополнительное поле"
+        int user_id PK,FK
+        int genre_id PK,FK
+        int preference_level
     }
     BOOK_GENRE_LINK {
-        int book_id FK
-        int genre_id FK
-        boolean is_primary "Дополнительное поле"
+        int book_id PK,FK
+        int genre_id PK,FK
+        boolean is_primary
     }
     WISHLIST_LINK {
-        int user_id FK
-        int book_id FK
-        datetime created_at "Дополнительное поле"
+        int user_id PK,FK
+        int book_id PK,FK
+        datetime created_at
     }
 </code></pre>
 <h2 id="4-api">4. Спецификация программного интерфейса (API)</h2>
@@ -1826,6 +1838,7 @@ python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </s
 <div class="highlight"><pre><span></span><code><span class="nv">DB_URL</span><span class="o">=</span>postgresql://postgres:password@localhost:5432/bookcrossing_db
 <span class="nv">SECRET_KEY</span><span class="o">=</span>your_secure_secret_key_string
 <span class="nv">ALGORITHM</span><span class="o">=</span>HS256
+<span class="nv">ACCESS_TOKEN_EXPIRE_MINUTES</span><span class="o">=</span><span class="m">30</span>
 </code></pre></div>
 </li>
 <li>
