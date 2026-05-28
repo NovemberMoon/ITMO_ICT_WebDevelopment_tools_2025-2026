@@ -1001,7 +1001,7 @@
 <p><strong>Тема проекта:</strong> Веб-приложение для буккроссинга (Bookcrossing)</p>
 <p><strong>Студент:</strong> Христофоров Владислав Николаевич, WEB 2.1</p>
 <h2 id="1-">1. Введение и бизнес-логика проекта</h2>
-<p>Данный документ представляет собой технический отчет и сопроводительную документацию к серверному приложению (API) для платформы обмена книгами — буккроссинга. Система спроектирована с целью предоставить пользователям удобный и безопасный инструмент для учета личных библиотек, поиска книг по географическому признаку и жанрам, а также для автоматизированного проведения сделок обмена.</p>
+<p>Данный документ представляет собой технический отчет и сопроводительную документацию к асинхронному серверному приложению (API) для платформы обмена книгами — буккроссинга. Система спроектирована с целью предоставить пользователям удобный и безопасный инструмент для учета личных библиотек, поиска книг по географическому признаку и жанрам, а также для автоматизированного проведения сделок обмена.</p>
 <h3 id="-">Бизнес-логика системы включает следующие аспекты:</h3>
 <ul>
 <li><strong>Идентификация физических книг:</strong> Каждая книга привязывается к уникальному коду буккроссинга (BCID), что позволяет отслеживать конкретный перемещающийся экземпляр, а не абстрактное издание.</li>
@@ -1044,12 +1044,12 @@
 <tr>
 <td style="text-align: left;"><strong>Финальная версия</strong></td>
 <td style="text-align: left;">Реализация JWT, замков безопасности (RBAC) и смены паролей</td>
-<td style="text-align: left;"><a href="https://github.com/NovemberMoon/ITMO_ICT_WebDevelopment_tools_2025-2026/commit/bdc88df416937d669419f142b720f7acb3626799">Коммит Финальной версии</a></td>
+<td style="text-align: left;"><a href="https://github.com/NovemberMoon/ITMO_ICT_WebDevelopment_tools_2025-2026/commit/dd42cb230f89f6abbacf801f72ad12cc4960d95f">Коммит Финальной версии</a></td>
 </tr>
 </tbody>
 </table>
 <h2 id="2">2. Архитектура и стек технологий</h2>
-<p>Программное решение спроектировано по модульному принципу, разделяя доменные модели, логику подключения к базе данных, сквозную безопасность и конечные точки API.</p>
+<p>Программное решение спроектировано по модульному принципу, разделяя доменные модели, логику подключения к базе данных, сквозную безопасность и конечные точки API. Все ключевые операции работы с СУБД выполняются в асинхронном режиме.</p>
 <table>
 <thead>
 <tr>
@@ -1066,13 +1066,13 @@
 </tr>
 <tr>
 <td style="text-align: left;"><strong>СУБД</strong></td>
-<td style="text-align: left;">PostgreSQL</td>
-<td style="text-align: left;">Хранение реляционных структурированных данных приложения.</td>
+<td style="text-align: left;">PostgreSQL + asyncpg</td>
+<td style="text-align: left;">Асинхронное хранение реляционных структурированных данных приложения.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>ORM / Схемы</strong></td>
-<td style="text-align: left;">SQLModel (v0.0.38)</td>
-<td style="text-align: left;">Единое описание таблиц базы данных и схем валидации Pydantic, исключающее дублирование описания полей.</td>
+<td style="text-align: left;">SQLModel (v0.0.38) + SQLAlchemy Async</td>
+<td style="text-align: left;">Декларативное описание таблиц и выполнение неблокирующих асинхронных запросов в БД.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>Миграции</strong></td>
@@ -1541,17 +1541,19 @@ erDiagram
 <span class="n">settings</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="52-srcdatabasepy">5.2 Подключение к базе данных (src/database.py)</h3>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">Session</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncGenerator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel.ext.asyncio.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncSession</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.asyncio</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_async_engine</span><span class="p">,</span> <span class="n">async_sessionmaker</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">config</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
 
-<span class="c1"># Если используем SQLite, нужен специальный аргумент. Для Postgres он вызывает ошибку.</span>
-<span class="n">connect_args</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;check_same_thread&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span> <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">DATABASE_URL</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;sqlite&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
+<span class="n">engine</span> <span class="o">=</span> <span class="n">create_async_engine</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">DATABASE_URL</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="c1"># Создаем подключение к БД с правильными аргументами</span>
-<span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">DATABASE_URL</span><span class="p">,</span> <span class="n">connect_args</span><span class="o">=</span><span class="n">connect_args</span><span class="p">)</span>
+<span class="n">async_session_factory</span> <span class="o">=</span> <span class="n">async_sessionmaker</span><span class="p">(</span>
+    <span class="n">engine</span><span class="p">,</span> <span class="n">expire_on_commit</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">get_session</span><span class="p">():</span>
-    <span class="k">with</span> <span class="n">Session</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_session</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">AsyncGenerator</span><span class="p">[</span><span class="n">AsyncSession</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">async_session_factory</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
         <span class="k">yield</span> <span class="n">session</span>
 </code></pre></div>
 <h2 id="6-sqlmodel">6. Финальные модели данных (SQLModel)</h2>
@@ -1834,15 +1836,32 @@ python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </s
 </li>
 <li>
 <p><strong>Конфигурация переменных окружения:</strong></p>
-<p>Создайте в корне файл .env:</p>
-<div class="highlight"><pre><span></span><code><span class="nv">DB_URL</span><span class="o">=</span>postgresql://postgres:password@localhost:5432/bookcrossing_db
+<p>Создайте в корне проекта файл .env (можете скопировать из .env.example) и заполните настройки подключения:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">POSTGRES_USER</span><span class="o">=</span>postgres
+<span class="nv">POSTGRES_PASSWORD</span><span class="o">=</span>password
+<span class="nv">POSTGRES_DB</span><span class="o">=</span>bookcrossing_db
+<span class="nv">POSTGRES_HOST</span><span class="o">=</span>localhost
+<span class="nv">POSTGRES_PORT</span><span class="o">=</span><span class="m">5432</span>
+<span class="nv">DB_URL</span><span class="o">=</span>postgresql+asyncpg://<span class="si">${</span><span class="nv">POSTGRES_USER</span><span class="si">}</span>:<span class="si">${</span><span class="nv">POSTGRES_PASSWORD</span><span class="si">}</span>@<span class="si">${</span><span class="nv">POSTGRES_HOST</span><span class="si">}</span>:<span class="si">${</span><span class="nv">POSTGRES_PORT</span><span class="si">}</span>/<span class="si">${</span><span class="nv">POSTGRES_DB</span><span class="si">}</span>
+
 <span class="nv">SECRET_KEY</span><span class="o">=</span>your_secure_secret_key_string
 <span class="nv">ALGORITHM</span><span class="o">=</span>HS256
 <span class="nv">ACCESS_TOKEN_EXPIRE_MINUTES</span><span class="o">=</span><span class="m">30</span>
+
+<span class="nv">PGADMIN_DEFAULT_EMAIL</span><span class="o">=</span>admin@bookcrossing.local
+<span class="nv">PGADMIN_DEFAULT_PASSWORD</span><span class="o">=</span>admin
 </code></pre></div>
 </li>
 <li>
+<p><strong>Запуск базы данных PostgreSQL через Docker:</strong></p>
+<p>Убедитесь, что у вас запущен Docker, и выполните команду для поднятия СУБД в фоновом режиме:</p>
+<div class="highlight"><pre><span></span><code>docker-compose<span class="w"> </span>up<span class="w"> </span>-d
+</code></pre></div>
+<p>(Панель администрирования БД pgAdmin будет доступна по адресу http://localhost:5050)</p>
+</li>
+<li>
 <p><strong>Применение миграций схемы к PostgreSQL:</strong></p>
+<p>После того как база данных запущена, создайте в ней нужные таблицы:</p>
 <div class="highlight"><pre><span></span><code>alembic<span class="w"> </span>upgrade<span class="w"> </span>head
 </code></pre></div>
 </li>
@@ -1850,11 +1869,11 @@ python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </s
 <p><strong>Запуск локального сервера:</strong>
     <div class="highlight"><pre><span></span><code>uvicorn<span class="w"> </span>src.main:app<span class="w"> </span>--reload
 </code></pre></div></p>
+<p>Сервер запустится по адресу <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a>, а интерактивная спецификация эндпоинтов станет доступна в панели <a href="http://127.0.0.1:8000/docs">http://127.0.0.1:8000/docs</a>.</p>
 </li>
 </ol>
-<p>Сервер запустится по адресу <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a>, а интерактивная спецификация эндпоинтов станет доступна в панели <a href="http://127.0.0.1:8000/docs">http://127.0.0.1:8000/docs</a>.</p>
 <h2 id="8">8. Заключение</h2>
-<p>В рамках выполнения лабораторной работы №1 было успешно спроектировано и реализовано серверное приложение. Были освоены современные практики построения быстрых API-интерфейсов на фреймворке FastAPI, организации реляционного хранения данных с помощью библиотеки декларативного описания моделей SQLModel (надстройка над SQLAlchemy), а также принципы развертывания миграций баз данных с помощью Alembic. Интеграция JWT-авторизации позволила гибко настроить разграничение прав доступа и защитить ключевые бизнес-процессы системы обмена книгами.</p>
+<p>В рамках выполнения лабораторной работы №1 было успешно спроектировано и реализовано отказоустойчивое асинхронное серверное приложение. Были освоены современные практики построения быстрых неблокирующих API-интерфейсов на фреймворке FastAPI, организации реляционного хранения данных с помощью SQLModel (надстройка над SQLAlchemy) с применением явной предзагрузки связей (selectinload) для обхода ограничений асинхронной среды, а также принципы развертывания миграций баз данных с помощью Alembic. Интеграция JWT-авторизации позволила гибко настроить разграничение прав доступа и защитить ключевые бизнес-процессы системы обмена книгами.</p>
 
 
 
