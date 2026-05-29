@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlmodel import Session, or_, select
+from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlmodel import or_, select
+from sqlalchemy.orm import selectinload
 from typing import List
 
 from database import get_session
@@ -15,74 +17,81 @@ from routers.auth import get_current_admin, get_current_user
 users_router = APIRouter(prefix="/users", tags=["Users"])
 locations_router = APIRouter(prefix="/locations", tags=["Locations"])
 
-# ЭНДПОИНТЫ ДЛЯ ЛОКАЦИЙ (ТОЛЬКО ДЛЯ АДМИНОВ, кроме чтения)
+# --- ЛОКАЦИИ ---
 
 @locations_router.post("/", response_model=LocationPublic, dependencies=[Depends(get_current_admin)])
-def create_location(location: LocationCreate, session: Session = Depends(get_session)) -> LocationPublic:
+async def create_location(location: LocationCreate, session: AsyncSession = Depends(get_session)):
     db_location = Location.model_validate(location)
     session.add(db_location)
-    session.commit()
-    session.refresh(db_location)
+    await session.commit()
+    await session.refresh(db_location)
     return db_location
 
 @locations_router.get("/", response_model=List[LocationPublic])
-def read_locations(offset: int = 0, limit: int = Query(default=100, le=100), session: Session = Depends(get_session)) -> List[LocationPublic]:
-    return session.exec(select(Location).offset(offset).limit(limit)).all()
+async def read_locations(offset: int = 0, limit: int = Query(default=100, le=100), session: AsyncSession = Depends(get_session)):
+    result = await session.exec(select(Location).offset(offset).limit(limit))
+    return result.all()
 
 @locations_router.get("/{location_id}", response_model=LocationPublic)
-def read_location(location_id: int, session: Session = Depends(get_session)) -> LocationPublic:
-    location = session.get(Location, location_id)
+async def read_location(location_id: int, session: AsyncSession = Depends(get_session)):
+    location = await session.get(Location, location_id)
     if not location:
         raise HTTPException(status_code=404, detail="Location not found")
     return location
 
 @locations_router.patch("/{location_id}", response_model=LocationPublic, dependencies=[Depends(get_current_admin)])
-def update_location(location_id: int, loc_data: LocationUpdate, session: Session = Depends(get_session)) -> LocationPublic:
-    db_location = session.get(Location, location_id)
+async def update_location(location_id: int, loc_data: LocationUpdate, session: AsyncSession = Depends(get_session)):
+    db_location = await session.get(Location, location_id)
     if not db_location:
         raise HTTPException(status_code=404, detail="Location not found")
         
-    for key, value in loc_data.model_dump(exclude_unset=True).items():
+    loc_data_dict = loc_data.model_dump(exclude_unset=True)
+    for key, value in loc_data_dict.items():
         setattr(db_location, key, value)
         
     session.add(db_location)
-    session.commit()
-    session.refresh(db_location)
+    await session.commit()
+    await session.refresh(db_location)
     return db_location
 
 @locations_router.delete("/{location_id}", dependencies=[Depends(get_current_admin)])
-def delete_location(location_id: int, session: Session = Depends(get_session)) -> dict:
-    location = session.get(Location, location_id)
+async def delete_location(location_id: int, session: AsyncSession = Depends(get_session)):
+    location = await session.get(Location, location_id)
     if not location:
         raise HTTPException(status_code=404, detail="Location not found")
-    session.delete(location)
-    session.commit()
+    await session.delete(location)
+    await session.commit()
     return {"ok": True, "message": "Location deleted"}
 
-# ЭНДПОИНТЫ ДЛЯ ПОЛЬЗОВАТЕЛЕЙ
+# --- ПОЛЬЗОВАТЕЛИ ---
 
 @users_router.get("/", response_model=List[UserPublic])
-def read_users(offset: int = 0, limit: int = Query(default=100, le=100), session: Session = Depends(get_session)) -> List[UserPublic]:
-    return session.exec(select(User).where(User.is_active == True).offset(offset).limit(limit)).all()
+async def read_users(offset: int = 0, limit: int = Query(default=100, le=100), session: AsyncSession = Depends(get_session)):
+    # Выводим только активных юзеров (исключая забаненных/удаленных)
+    result = await session.exec(select(User).where(User.is_active == True).offset(offset).limit(limit))
+    return result.all()
 
 @users_router.get("/me", response_model=UserPublicWithLocation)
-def read_user_me(current_user: User = Depends(get_current_user)) -> UserPublicWithLocation:
-    """Возвращает профиль текущего авторизованного пользователя"""
+async def read_user_me(current_user: User = Depends(get_current_user)):
     return current_user
 
 @users_router.get("/{user_id}", response_model=UserPublicWithLocation)
-def read_user(user_id: int, session: Session = Depends(get_session)) -> UserPublicWithLocation:
-    user = session.get(User, user_id)
+async def read_user(user_id: int, session: AsyncSession = Depends(get_session)):
+    # Упреждающая загрузка (selectinload) для получения данных о локации вместе с пользователем
+    statement = select(User).where(User.id == user_id).options(selectinload(User.location))
+    result = await session.exec(statement)
+    user = result.first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
 @users_router.patch("/{user_id}", response_model=UserPublic)
-def update_user(user_id: int, user_data: UserUpdate, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)) -> UserPublic:
+async def update_user(user_id: int, user_data: UserUpdate, session: AsyncSession = Depends(get_session), current_user: User = Depends(get_current_user)):
+    # Проверка прав: редактировать профиль может только владелец или администратор
     if current_user.id != user_id and current_user.role != Role.admin:
         raise HTTPException(status_code=403, detail="Not enough permissions to edit this profile")
 
-    db_user = session.get(User, user_id)
+    db_user = await session.get(User, user_id)
     if not db_user or not db_user.is_active:
         raise HTTPException(status_code=404, detail="User not found")
         
@@ -90,77 +99,79 @@ def update_user(user_id: int, user_data: UserUpdate, session: Session = Depends(
         setattr(db_user, key, value)
         
     session.add(db_user)
-    session.commit()
-    session.refresh(db_user)
+    await session.commit()
+    await session.refresh(db_user)
     return db_user
 
 @users_router.post("/{user_id}/password")
-def change_password(
+async def change_password(
     user_id: int,
     password_data: UserChangePassword,
-    session: Session = Depends(get_session),
+    session: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user)
-) -> dict:
+):
     if current_user.id != user_id and current_user.role != Role.admin:
         raise HTTPException(status_code=403, detail="Not enough permissions")
         
-    user = session.get(User, user_id)
+    user = await session.get(User, user_id)
     if not user or not user.is_active:
         raise HTTPException(status_code=404, detail="User not found")
         
     from security import verify_password, get_password_hash
     
-    # Обязательная проверка старого пароля для безопасности
     if not verify_password(password_data.old_password, user.hashed_password):
         raise HTTPException(status_code=400, detail="Incorrect old password")
         
-    # Устанавливаем новый хеш
     user.hashed_password = get_password_hash(password_data.new_password)
     session.add(user)
-    session.commit()
+    await session.commit()
     return {"ok": True, "message": "Password changed successfully"}
 
 @users_router.delete("/{user_id}")
-def delete_user(
+async def delete_user(
     user_id: int, 
-    session: Session = Depends(get_session),
+    session: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user)
-) -> dict:
-    # Пользователь может удалить только свой профиль
+):
     if current_user.id != user_id and current_user.role != Role.admin:
         raise HTTPException(status_code=403, detail="Not enough permissions to delete this profile")
 
-    user = session.get(User, user_id)
+    user = await session.get(User, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
         
-    # МЯГКОЕ УДАЛЕНИЕ
+    # Мягкое удаление: вместо `session.delete(user)` скрываем флажком,
+    # чтобы не сломать историю обменов в базе данных
     user.is_active = False 
     session.add(user)
-    session.commit()
+    await session.commit()
     return {"ok": True, "message": "User soft deleted"}
 
-# ВИШЛИСТ ПОЛЬЗОВАТЕЛЯ
+# --- ВИШЛИСТЫ ---
 
 @users_router.get("/{user_id}/wishlist", response_model=List[BookPublic])
-def get_wishlist(user_id: int, session: Session = Depends(get_session)) -> List[BookPublic]:
-    user = session.get(User, user_id)
-    if not user or not user.is_active:
+async def get_wishlist(user_id: int, session: AsyncSession = Depends(get_session)):
+    # Подгружаем M:M связь (wishlisted_books) с помощью асинхронного selectinload
+    statement = select(User).where(User.id == user_id, User.is_active == True).options(selectinload(User.wishlisted_books))
+    result = await session.exec(statement)
+    user = result.first()
+    if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
     return user.wishlisted_books
 
 @users_router.post("/{user_id}/wishlist/{book_id}")
-def add_to_wishlist(user_id: int, book_id: int, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)) -> dict:
+async def add_to_wishlist(user_id: int, book_id: int, session: AsyncSession = Depends(get_session), current_user: User = Depends(get_current_user)):
     if current_user.id != user_id:
         raise HTTPException(status_code=403, detail="Not enough permissions")
 
-    # ДОБАВЛЕНИЕ СВЯЗИ MANY-TO-MANY:
-    user = session.get(User, user_id)
-    if not user or not user.is_active:
+    statement = select(User).where(User.id == user_id, User.is_active == True).options(selectinload(User.wishlisted_books))
+    result = await session.exec(statement)
+    user = result.first()
+    if not user:
         raise HTTPException(status_code=404, detail="User not found")
         
-    book = session.get(Book, book_id)
+    book = await session.get(Book, book_id)
     if not book or book.is_deleted:
         raise HTTPException(status_code=404, detail="Book not found")
         
@@ -169,19 +180,21 @@ def add_to_wishlist(user_id: int, book_id: int, session: Session = Depends(get_s
 
     user.wishlisted_books.append(book)
     session.add(user)
-    session.commit()
+    await session.commit()
     return {"ok": True, "message": "Book added to wishlist"}
 
 @users_router.delete("/{user_id}/wishlist/{book_id}")
-def remove_from_wishlist(user_id: int, book_id: int, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)) -> dict:
+async def remove_from_wishlist(user_id: int, book_id: int, session: AsyncSession = Depends(get_session), current_user: User = Depends(get_current_user)):
     if current_user.id != user_id:
         raise HTTPException(status_code=403, detail="Not enough permissions")
 
-    user = session.get(User, user_id)
-    if not user or not user.is_active:
+    statement = select(User).where(User.id == user_id, User.is_active == True).options(selectinload(User.wishlisted_books))
+    result = await session.exec(statement)
+    user = result.first()
+    if not user:
         raise HTTPException(status_code=404, detail="User not found")
         
-    book = session.get(Book, book_id)
+    book = await session.get(Book, book_id)
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
         
@@ -190,28 +203,32 @@ def remove_from_wishlist(user_id: int, book_id: int, session: Session = Depends(
 
     user.wishlisted_books.remove(book)
     session.add(user)
-    session.commit()
+    await session.commit()
     return {"ok": True, "message": "Book removed from wishlist"}
 
-# ИНТЕРЕСЫ ПОЛЬЗОВАТЕЛЯ
+# --- ИНТЕРЕСЫ ПОЛЬЗОВАТЕЛЯ ---
 
 @users_router.get("/{user_id}/genres", response_model=List[GenrePublic])
-def get_user_genres(user_id: int, session: Session = Depends(get_session)) -> List[GenrePublic]:
-    user = session.get(User, user_id)
-    if not user or not user.is_active:
+async def get_user_genres(user_id: int, session: AsyncSession = Depends(get_session)):
+    statement = select(User).where(User.id == user_id, User.is_active == True).options(selectinload(User.genres))
+    result = await session.exec(statement)
+    user = result.first()
+    if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user.genres
 
 @users_router.post("/{user_id}/genres/{genre_id}")
-def add_user_genre(user_id: int, genre_id: int, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)) -> dict:
+async def add_user_genre(user_id: int, genre_id: int, session: AsyncSession = Depends(get_session), current_user: User = Depends(get_current_user)):
     if current_user.id != user_id:
         raise HTTPException(status_code=403, detail="Not enough permissions")
 
-    user = session.get(User, user_id)
-    if not user or not user.is_active:
+    statement = select(User).where(User.id == user_id, User.is_active == True).options(selectinload(User.genres))
+    result = await session.exec(statement)
+    user = result.first()
+    if not user:
         raise HTTPException(status_code=404, detail="User not found")
         
-    genre = session.get(Genre, genre_id)
+    genre = await session.get(Genre, genre_id)
     if not genre:
         raise HTTPException(status_code=404, detail="Genre not found")
         
@@ -220,19 +237,21 @@ def add_user_genre(user_id: int, genre_id: int, session: Session = Depends(get_s
 
     user.genres.append(genre)
     session.add(user)
-    session.commit()
+    await session.commit()
     return {"ok": True, "message": "Genre added to user interests"}
 
 @users_router.delete("/{user_id}/genres/{genre_id}")
-def remove_user_genre(user_id: int, genre_id: int, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)) -> dict:
+async def remove_user_genre(user_id: int, genre_id: int, session: AsyncSession = Depends(get_session), current_user: User = Depends(get_current_user)):
     if current_user.id != user_id:
         raise HTTPException(status_code=403, detail="Not enough permissions")
 
-    user = session.get(User, user_id)
-    if not user or not user.is_active:
+    statement = select(User).where(User.id == user_id, User.is_active == True).options(selectinload(User.genres))
+    result = await session.exec(statement)
+    user = result.first()
+    if not user:
         raise HTTPException(status_code=404, detail="User not found")
         
-    genre = session.get(Genre, genre_id)
+    genre = await session.get(Genre, genre_id)
     if not genre:
         raise HTTPException(status_code=404, detail="Genre not found")
         
@@ -241,31 +260,29 @@ def remove_user_genre(user_id: int, genre_id: int, session: Session = Depends(ge
 
     user.genres.remove(genre)
     session.add(user)
-    session.commit()
+    await session.commit()
     return {"ok": True, "message": "Genre removed from user interests"}
 
-# КНИГИ ПОЛЬЗОВАТЕЛЯ
+# --- КНИГИ ПОЛЬЗОВАТЕЛЯ ---
 
 @users_router.get("/{user_id}/books", response_model=List[BookPublic])
-def get_user_books(user_id: int, session: Session = Depends(get_session)) -> List[BookPublic]:
-    user = session.get(User, user_id)
+async def get_user_books(user_id: int, session: AsyncSession = Depends(get_session)):
+    user = await session.get(User, user_id)
     if not user or not user.is_active:
         raise HTTPException(status_code=404, detail="User not found")
     
-    # Возвращаем только не удаленные книги, владельцем которых является пользователь
-    books = session.exec(select(Book).where(Book.owner_id == user_id, Book.is_deleted == False)).all()
-    return books
+    result = await session.exec(select(Book).where(Book.owner_id == user_id, Book.is_deleted == False))
+    return result.all()
 
 
-# ИСТОРИЯ ОБМЕНОВ ПОЛЬЗОВАТЕЛЯ
+# --- ИСТОРИЯ ОБМЕНОВ И ОТЗЫВЫ ---
 
 @users_router.get("/{user_id}/exchanges", response_model=List[ExchangeRequestPublic])
-def get_user_exchanges(user_id: int, session: Session = Depends(get_session)) -> List[ExchangeRequestPublic]:
-    user = session.get(User, user_id)
+async def get_user_exchanges(user_id: int, session: AsyncSession = Depends(get_session)):
+    user = await session.get(User, user_id)
     if not user or not user.is_active:
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Сложный запрос: ищем обмены, где пользователь либо просил книгу, либо просили ЕГО книгу.
     statement = select(ExchangeRequest).join(Book, ExchangeRequest.requested_book_id == Book.id).where(
         or_(
             ExchangeRequest.requester_id == user_id,
@@ -273,16 +290,15 @@ def get_user_exchanges(user_id: int, session: Session = Depends(get_session)) ->
         ),
         ExchangeRequest.is_deleted == False
     )
-    return session.exec(statement).all()
-
-# ОТЗЫВЫ О ПОЛЬЗОВАТЕЛЕ
+    result = await session.exec(statement)
+    return result.all()
 
 @users_router.get("/{user_id}/reviews", response_model=List[ReviewPublic])
-def get_user_reviews(user_id: int, session: Session = Depends(get_session)) -> List[ReviewPublic]:
-    user = session.get(User, user_id)
+async def get_user_reviews(user_id: int, session: AsyncSession = Depends(get_session)):
+    user = await session.get(User, user_id)
     if not user or not user.is_active:
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Ищем отзывы, написанные НА этого пользователя (рейтинг юзера)
     statement = select(Review).where(Review.target_user_id == user_id, Review.is_deleted == False)
-    return session.exec(statement).all()
+    result = await session.exec(statement)
+    return result.all()
