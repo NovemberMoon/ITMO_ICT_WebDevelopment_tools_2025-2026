@@ -28,13 +28,17 @@ theme:
         - search.highlight
         - content.code.copy
 markdown_extensions:
-  - attr_list
-  - pymdownx.superfences:
-      custom_fences:
-        - name: mermaid
-          class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format
+    - attr_list
+    - pymdownx.superfences:
+          custom_fences:
+              - name: mermaid
+                class: mermaid
+                format: !!python/name:pymdownx.superfences.fence_code_format
 nav:
     - Главная: index.md
     - Лабораторная работа №1:
-          - Отчет: lab-1/lab-1_report.md
+          - Отчет: lab-1/lab-1.md
+    - Лабораторная работа №2:
+          - Отчет: lab-2/lab-2.md
+          - Задание 1: lab-2/task-1.md
+          - Задание 2: lab-2/task-2.md
