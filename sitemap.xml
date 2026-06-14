@@ -2,10 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://NovemberMoon.github.io/ITMO_ICT_WebDevelopment_tools_2025-2026/</loc>
-         <lastmod>2026-05-29</lastmod>
+         <lastmod>2026-06-14</lastmod>
     </url>
     <url>
-         <loc>https://NovemberMoon.github.io/ITMO_ICT_WebDevelopment_tools_2025-2026/lab-1/lab-1_report/</loc>
-         <lastmod>2026-05-29</lastmod>
+         <loc>https://NovemberMoon.github.io/ITMO_ICT_WebDevelopment_tools_2025-2026/lab-1/lab-1/</loc>
+         <lastmod>2026-06-14</lastmod>
+    </url>
+    <url>
+         <loc>https://NovemberMoon.github.io/ITMO_ICT_WebDevelopment_tools_2025-2026/lab-2/lab-2/</loc>
+         <lastmod>2026-06-14</lastmod>
+    </url>
+    <url>
+         <loc>https://NovemberMoon.github.io/ITMO_ICT_WebDevelopment_tools_2025-2026/lab-2/task-1/</loc>
+         <lastmod>2026-06-14</lastmod>
+    </url>
+    <url>
+         <loc>https://NovemberMoon.github.io/ITMO_ICT_WebDevelopment_tools_2025-2026/lab-2/task-2/</loc>
+         <lastmod>2026-06-14</lastmod>
     </url>
 </urlset>
