@@ -1,0 +1,56 @@
+services:
+    # База данных PostgreSQL
+    db:
+        image: postgres:16-bookworm
+        container_name: bookcrossing_db
+        restart: always
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: bookcrossing_db
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        healthcheck:
+            test:
+                ["CMD", "pg_isready", "-U", "postgres", "-d", "bookcrossing_db"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+
+    # Парсер
+    parser:
+        build:
+            context: ./parser
+            dockerfile: Dockerfile
+        container_name: bookcrossing_parser
+        restart: always
+        ports:
+            - "8001:8000"
+
+    # Основное веб-приложение
+    web:
+        build:
+            context: ./web
+            dockerfile: Dockerfile
+        container_name: bookcrossing_web
+        restart: always
+        env_file:
+            - ./web/.env
+        environment:
+            POSTGRES_HOST: db
+            DB_URL: postgresql+asyncpg://postgres:password@db:5432/bookcrossing_db
+        ports:
+            - "8000:8000"
+        depends_on:
+            db:
+                condition: service_healthy
+            parser:
+                condition: service_started
+        command: >
+            sh -c "alembic upgrade head &&
+                   uvicorn src.main:app --host 0.0.0.0 --port 8000"
+
+volumes:
+    postgres_data:
