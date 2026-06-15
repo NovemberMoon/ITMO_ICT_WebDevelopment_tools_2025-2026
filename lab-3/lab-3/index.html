@@ -1,0 +1,1325 @@
+
+<!doctype html>
+<html lang="ru" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://NovemberMoon.github.io/ITMO_ICT_WebDevelopment_tools_2025-2026/lab-3/lab-3/">
+      
+      
+        <link rel="prev" href="../../lab-2/task-2/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Отчет - Лабораторные работы</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#no3-fastapi-docker" class="md-skip">
+          Перейти к содержанию
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Верхний колонтитул">
+    <a href="../.." title="Лабораторные работы" class="md-header__button md-logo" aria-label="Лабораторные работы" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Лабораторные работы
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Отчет
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="lime"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Поиск" placeholder="Поиск" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Поиск">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Очистить" aria-label="Очистить" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Инициализация поиска
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Вкладки" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Главная
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../lab-1/lab-1/" class="md-tabs__link">
+          
+  
+  
+  Лабораторная работа №1
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../lab-2/lab-2/" class="md-tabs__link">
+          
+  
+  
+  Лабораторная работа №2
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+  Лабораторная работа №3
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Навигация" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Лабораторные работы" class="md-nav__button md-logo" aria-label="Лабораторные работы" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Лабораторные работы
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Главная
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Лабораторная работа №1
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Лабораторная работа №1
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab-1/lab-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Отчет
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Лабораторная работа №2
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Лабораторная работа №2
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab-2/lab-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Отчет
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab-2/task-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Задание 1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab-2/task-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Задание 2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Лабораторная работа №3
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Лабораторная работа №3
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Отчет
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Отчет
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Введение
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Введение">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Основные решаемые задачи:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Топология сервисов и стек технологий
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Топология сервисов и стек технологий">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1. Стек технологий инфраструктуры
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Синхронное взаимодействие
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-celery-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Асинхронные очереди и планировщик (Celery + Redis)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Асинхронные очереди и планировщик (Celery + Redis)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1. Роутинг асинхронных задач (API)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-event-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2. Изоляция пула соединений СУБД (Решение конфликтов Event Loop)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-celery-beat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3. Системные задачи по расписанию (Celery Beat)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Инструкция по локальному развертыванию
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Заключение
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Введение
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Введение">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Основные решаемые задачи:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Топология сервисов и стек технологий
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Топология сервисов и стек технологий">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1. Стек технологий инфраструктуры
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Синхронное взаимодействие
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-celery-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Асинхронные очереди и планировщик (Celery + Redis)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Асинхронные очереди и планировщик (Celery + Redis)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1. Роутинг асинхронных задач (API)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-event-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2. Изоляция пула соединений СУБД (Решение конфликтов Event Loop)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-celery-beat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3. Системные задачи по расписанию (Celery Beat)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Инструкция по локальному развертыванию
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Заключение
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="no3-fastapi-docker">Отчет по лабораторной работе №3: "Упаковка FastAPI приложения в Docker, Работа с источниками данных и Очереди"</h1>
+<p><strong>Дисциплина:</strong> Web-программирование</p>
+<p><strong>Тема проекта:</strong> Веб-приложение для буккроссинга (Bookcrossing)</p>
+<p><strong>Студент:</strong> Христофоров Владислав Николаевич, WEB 2.1</p>
+<h2 id="1">1. Введение</h2>
+<p>В рамках данной лабораторной работы осуществлено объединение основного REST API и алгоритмов извлечения данных в единую инфраструктуру. Программные компоненты системы были изолированы друг от друга с использованием технологий контейнеризации (Docker), а для связи между ними настроено сетевое взаимодействие.</p>
+<p><strong>Цель работы:</strong> интегрировать парсер данных в основное веб-приложение, реализовать возможность вызова парсера как синхронно (через REST API), так и асинхронно (с использованием брокера сообщений и фоновых очередей задач), а также оркестрировать запуск всей инфраструктуры в виртуальной сети.</p>
+<h3 id="_1">Основные решаемые задачи:</h3>
+<ol>
+<li>Оформление скриптов парсинга в виде полноценного независимого веб-сервиса на FastAPI.</li>
+<li>Реализация синхронного межсервисного взаимодействия по протоколу HTTP (REST).</li>
+<li>Выделение логики HTTP-запросов и сохранения спарсенных данных в отдельные вспомогательные функции для предотвращения дублирования кода.</li>
+<li>Развертывание брокера сообщений (Redis) и распределенной очереди задач (Celery) для фоновой обработки сетевых запросов.</li>
+<li>Настройка планировщика периодических системных задач (Celery Beat).</li>
+<li>Контейнеризация и оркестрация всей инфраструктуры средствами Docker Compose с использованием healthcheck-проверок.</li>
+</ol>
+<h2 id="2">2. Топология сервисов и стек технологий</h2>
+<p>В целевой архитектуре система состоит из 6 изолированных контейнеров, общающихся внутри единой приватной сети Docker.</p>
+<pre class="mermaid"><code>graph TD
+    Client["Клиент / Swagger UI"] --&gt;|"HTTP Запрос"| Web["Web API контейнер"]
+    Web --&gt;|"JSON Ответ"| Client
+
+    subgraph "Контур прямых вызовов (Request-Reply)"
+        Web --&gt;|"HTTP POST"| Parser["Parser контейнер"]
+        Parser --&gt;|"JSON Ответ"| Web
+
+        Parser --&gt;|"HTTP GET"| External(("Внешние сайты"))
+        External --&gt;|"HTML страница"| Parser
+    end
+
+    subgraph "Контур фоновых задач (Очереди)"
+        Web --&gt;|"task.delay (Публикация)"| Redis[("Redis Broker")]
+        Redis --&gt;|"consume (Подписка)"| Worker["Celery Worker"]
+        Beat["Celery Beat"] --&gt;|"cron trigger"| Redis
+
+        Worker --&gt;|"HTTP POST"| Parser
+        Parser --&gt;|"JSON Ответ"| Worker
+    end
+
+    subgraph "Слой данных"
+        Web --&gt;|"SQL запрос (asyncpg)"| DB[("PostgreSQL")]
+        DB --&gt;|"Набор данных"| Web
+
+        Worker --&gt;|"SQL запрос (asyncpg)"| DB
+        DB --&gt;|"Набор данных"| Worker
+    end</code></pre>
+<h3 id="21">2.1. Стек технологий инфраструктуры</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Компонент</th>
+<th style="text-align: left;">Технология</th>
+<th style="text-align: left;">Роль и назначение в архитектуре</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Основное API (<code>web</code>)</strong></td>
+<td style="text-align: left;">FastAPI, Python 3.12</td>
+<td style="text-align: left;">Обработка клиентских запросов, маршрутизация, управление бизнес-логикой и JWT-авторизацией.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Служба парсинга (<code>parser</code>)</strong></td>
+<td style="text-align: left;">FastAPI, aiohttp, bs4</td>
+<td style="text-align: left;">Обертка над скриптами для извлечения метаданных из HTML-ресурсов (Project Gutenberg, Standard Ebooks).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>База данных (<code>db</code>)</strong></td>
+<td style="text-align: left;">PostgreSQL 16</td>
+<td style="text-align: left;">Персистентное хранение реляционных данных системы.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Брокер сообщений (<code>redis</code>)</strong></td>
+<td style="text-align: left;">Redis</td>
+<td style="text-align: left;">In-memory хранилище (Message Broker) для маршрутизации задач Celery и сохранения их статусов (Result Backend).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Исполнитель (<code>worker</code>)</strong></td>
+<td style="text-align: left;">Celery</td>
+<td style="text-align: left;">Фоновый рабочий процесс (consumer), выполняющий задачи парсинга в обход основного Event Loop FastAPI.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Планировщик (<code>beat</code>)</strong></td>
+<td style="text-align: left;">Celery Beat</td>
+<td style="text-align: left;">Служба-планировщик для инициации системных задач по расписанию (аналог Cron).</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3">3. Синхронное взаимодействие</h2>
+<p>Для интеграции парсера в главное приложение логика отправки HTTP-запроса через библиотеку <code>httpx</code> и алгоритмы сохранения данных в БД (с созданием и привязкой жанров в <code>save_parsed_book</code>) были вынесены во вспомогательный модуль <code>services/parser_service.py</code>.</p>
+<p><strong>Синхронный эндпоинт (<code>POST /parser/sync</code>)</strong> работает по классической модели: он блокирует контекст текущего HTTP-запроса, переиспользует вспомогательную функцию для ожидания ответа от контейнера <code>parser</code>, сохраняет данные в локальную БД и лишь затем возвращает ответ клиенту.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Фрагмент роутера (routers/parser.py)</span>
+<span class="nd">@router</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/sync&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">BookPublicWithGenres</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">parse_and_save_sync</span><span class="p">(</span>
+    <span class="n">request</span><span class="p">:</span> <span class="n">ParseRequestURL</span><span class="p">,</span>
+    <span class="n">session</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_session</span><span class="p">),</span>
+    <span class="n">current_user</span><span class="p">:</span> <span class="n">User</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_current_user</span><span class="p">)</span>
+<span class="p">):</span>
+    <span class="n">parser_data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">fetch_data_from_microservice</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">new_book</span> <span class="o">=</span> <span class="k">await</span> <span class="n">save_parsed_book</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">parser_data</span><span class="p">,</span> <span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new_book</span>
+</code></pre></div>
+<h2 id="4-celery-redis">4. Асинхронные очереди и планировщик (Celery + Redis)</h2>
+<p>Для предотвращения блокировки основного веб-сервера при длительном парсинге книг внедрена распределенная система очередей задач.</p>
+<h3 id="41-api">4.1. Роутинг асинхронных задач (API)</h3>
+<p>При вызове эндпоинта <code>POST /parser/async</code> приложение использует метод <code>task.delay()</code>. Это сериализует аргументы функции и мгновенно отправляет их в брокер Redis. Клиент получает <code>task_id</code> и ответ со статусом <code>Task added to queue</code>, не дожидаясь реального окончания парсинга. Для мониторинга прогресса (Polling) реализован эндпоинт <code>GET /parser/status/{task_id}</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Фрагмент роутера (routers/parser.py)</span>
+<span class="nd">@router</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/async&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">TaskResponse</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">parse_and_save_async</span><span class="p">(</span>
+    <span class="n">request</span><span class="p">:</span> <span class="n">ParseRequestURL</span><span class="p">,</span>
+    <span class="n">current_user</span><span class="p">:</span> <span class="n">User</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_current_user</span><span class="p">)</span>
+<span class="p">):</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">parse_and_save_task</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;task_id&quot;</span><span class="p">:</span> <span class="n">task</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;Task added to queue&quot;</span><span class="p">}</span>
+
+<span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/status/</span><span class="si">{task_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_task_status</span><span class="p">(</span><span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">task_result</span> <span class="o">=</span> <span class="n">AsyncResult</span><span class="p">(</span><span class="n">task_id</span><span class="p">,</span> <span class="n">app</span><span class="o">=</span><span class="n">celery_app</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;task_id&quot;</span><span class="p">:</span> <span class="n">task_id</span><span class="p">,</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">task_result</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">task_result</span><span class="o">.</span><span class="n">ready</span><span class="p">():</span>
+        <span class="n">response</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">task_result</span><span class="o">.</span><span class="n">result</span>
+    <span class="k">return</span> <span class="n">response</span>
+</code></pre></div>
+<h3 id="42-event-loop">4.2. Изоляция пула соединений СУБД (Решение конфликтов Event Loop)</h3>
+<p>Ключевой сложностью при интеграции синхронных воркеров Celery с асинхронным драйвером базы данных <code>asyncpg</code> является жесткая привязка пула сетевых TCP-соединений к конкретному циклу событий (Event Loop). При попытке импорта глобального объекта <code>engine</code> из основного приложения возникали критические ошибки конкурентного доступа (<code>another operation is in progress</code>).</p>
+<p><strong>Архитектурное решение:</strong> внутри функции задачи (в модуле <code>tasks.py</code>) реализовано локальное создание изолированного пула подключений <code>create_async_engine</code> с использованием <code>AsyncSession</code> из библиотеки SQLModel. Этот пул инициализируется и уничтожается (<code>engine.dispose()</code>) строго в пределах локального <code>asyncio.run()</code>, изолируя соединения от других задач и процессов.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Фрагмент фоновой задачи (tasks.py)</span>
+<span class="nd">@shared_task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;tasks.parse_and_save_task&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_and_save_task</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">services.parser_service</span><span class="w"> </span><span class="kn">import</span> <span class="n">fetch_data_from_microservice</span><span class="p">,</span> <span class="n">save_parsed_book</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">run_async_pipeline</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="c1"># Инициализация изолированного пула во избежание конфликтов Event Loop</span>
+        <span class="n">engine</span> <span class="o">=</span> <span class="n">create_async_engine</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">DATABASE_URL</span><span class="p">)</span>
+        <span class="n">session_factory</span> <span class="o">=</span> <span class="n">async_sessionmaker</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="n">AsyncSession</span><span class="p">,</span> <span class="n">expire_on_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">async</span> <span class="k">with</span> <span class="n">session_factory</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">fetch_data_from_microservice</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+                <span class="n">book</span> <span class="o">=</span> <span class="k">await</span> <span class="n">save_parsed_book</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;Success&quot;</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">book</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="s2">&quot;bcid&quot;</span><span class="p">:</span> <span class="n">book</span><span class="o">.</span><span class="n">bcid</span><span class="p">}</span>
+        <span class="k">except</span> <span class="n">HTTPException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;Failed&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">detail</span><span class="p">)}</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;Error&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)}</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">engine</span><span class="o">.</span><span class="n">dispose</span><span class="p">()</span> <span class="c1"># Корректное освобождение ресурсов сокетов</span>
+
+    <span class="k">return</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">run_async_pipeline</span><span class="p">())</span>
+</code></pre></div>
+<h3 id="43-celery-beat">4.3. Системные задачи по расписанию (Celery Beat)</h3>
+<p>Для автоматизации фоновых процессов настроен планировщик <code>Celery Beat</code>. В проекте реализована задача <code>log_database_statistics</code>, которая по заданному расписанию (каждую минуту в рамках демонстрации) осуществляет агрегацию данных – подсчет общего количества книг в библиотеке – и выводит системный отчет в лог-файл воркера.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Фрагмент фоновой задачи (tasks.py)</span>
+<span class="nd">@shared_task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;tasks.log_database_statistics&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">log_database_statistics</span><span class="p">():</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">run_stats_check</span><span class="p">():</span>
+        <span class="n">engine</span> <span class="o">=</span> <span class="n">create_async_engine</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">DATABASE_URL</span><span class="p">)</span>
+        <span class="n">session_factory</span> <span class="o">=</span> <span class="n">async_sessionmaker</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="n">AsyncSession</span><span class="p">,</span> <span class="n">expire_on_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">async</span> <span class="k">with</span> <span class="n">session_factory</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">select</span><span class="p">,</span> <span class="n">func</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">models.books</span><span class="w"> </span><span class="kn">import</span> <span class="n">Book</span>
+
+                <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">Book</span><span class="o">.</span><span class="n">id</span><span class="p">)))</span>
+                <span class="n">total_books</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[CELERY BEAT] Системная аналитика: Зарегистрировано </span><span class="si">{</span><span class="n">total_books</span><span class="si">}</span><span class="s2"> сущностей &#39;Книга&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">engine</span><span class="o">.</span><span class="n">dispose</span><span class="p">()</span>
+
+    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">run_stats_check</span><span class="p">())</span>
+</code></pre></div>
+<h2 id="5">5. Инструкция по локальному развертыванию</h2>
+<p>Процесс развертывания автоматизирован средствами Docker Compose. В конфигурации внедрены проверки состояния (Healthchecks), гарантирующие, что зависимые сервисы (веб-приложение и воркеры) запускаются исключительно после полной готовности базы данных принимать соединения.</p>
+<p>Для локального запуска выполните следующие шаги:</p>
+<ol>
+<li>
+<p><strong>Клонирование проекта:</strong></p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span><span class="o">[</span>https://github.com/<span class="o">](</span>https://github.com/<span class="o">)[</span>ЛОГИН<span class="o">]</span>/<span class="o">[</span>РЕПОЗИТОРИЙ<span class="o">]</span>.git
+<span class="nb">cd</span><span class="w"> </span>Lr3
+</code></pre></div>
+</li>
+<li>
+<p><strong>Настройка переменных окружения:</strong>
+   В директории <code>Lr3/web/</code> создайте файл <code>.env</code>. Обратите внимание, что URL-адреса брокера сообщений (Redis) и хост БД передаются безопасно напрямую в <code>docker-compose.yml</code> и не запекаются внутрь образов. В <code>.env</code> достаточно указать ключи шифрования:</p>
+<div class="highlight"><pre><span></span><code># Lr3/web/.env
+SECRET_KEY=super-secret-key-for-bookcrossing-lab3
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+</code></pre></div>
+</li>
+<li>
+<p><strong>Сборка и запуск оркестратора:</strong>
+   Выполните команду для сборки образов и фонового запуска всей системы:</p>
+<div class="highlight"><pre><span></span><code>docker-compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--build
+</code></pre></div>
+</li>
+<li>
+<p><strong>Автоматические миграции и проверка:</strong>
+   Команда запуска веб-сервера <code>web</code> в <code>docker-compose.yml</code> автоматически выполняет <code>alembic upgrade head</code> перед стартом сервера. Ручной накат миграций не требуется.</p>
+<p>Убедитесь, что все контейнеры запущены успешно:</p>
+<div class="highlight"><pre><span></span><code>docker-compose<span class="w"> </span>ps
+</code></pre></div>
+</li>
+<li>
+<p><strong>Доступ к сервисам:</strong></p>
+<ul>
+<li><strong>Главное API (Bookcrossing):</strong> <code>http://localhost:8000/docs</code></li>
+<li><strong>API Сервиса парсера:</strong> <code>http://localhost:8001/docs</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Остановка и очистка:</strong>
+   Для полной остановки системы с удалением томов базы данных (Сброс стейта):
+    <div class="highlight"><pre><span></span><code>docker-compose<span class="w"> </span>down<span class="w"> </span>-v
+</code></pre></div></p>
+</li>
+</ol>
+<h2 id="6">6. Заключение</h2>
+<p>В ходе выполнения лабораторной работы разрозненные компоненты из предыдущих работ (REST API и скрипты парсинга) были успешно объединены в единую контейнеризованную систему. Внедрение Docker стандартизировало процесс сборки и развертывания проекта, устранив возможные конфликты зависимостей локальных сред. Интеграция Celery и Redis позволила перенести длительные сетевые вызовы в фоновые процессы, обеспечив неблокирующий отклик основного веб-сервера (FastAPI). Вынесение вспомогательной логики работы с БД и HTTP-запросами в отдельные функции исключило дублирование кода между синхронными маршрутами и фоновыми задачами.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  К началу
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "toc.follow", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
