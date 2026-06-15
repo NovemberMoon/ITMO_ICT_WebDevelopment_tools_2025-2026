@@ -12,5 +12,8 @@ class Settings:
     ALGORITHM: str = os.getenv("ALGORITHM", "HS256")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
 
+    # Брокер сообщений
+    REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+
 # Создаем глобальный объект настроек
 settings = Settings()

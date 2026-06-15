@@ -41,6 +41,7 @@ services:
         environment:
             POSTGRES_HOST: db
             DB_URL: postgresql+asyncpg://postgres:password@db:5432/bookcrossing_db
+            REDIS_URL: redis://redis:6379/0
         ports:
             - "8000:8000"
         depends_on:
@@ -51,6 +52,37 @@ services:
         command: >
             sh -c "alembic upgrade head &&
                    uvicorn src.main:app --host 0.0.0.0 --port 8000"
+
+    # Брокер сообщений Redis
+    redis:
+        image: redis:8.0-bookworm
+        container_name: bookcrossing_redis
+        restart: always
+        ports:
+            - "6379:6379"
+
+    # Фоновый воркер Celery
+    worker:
+        build:
+            context: ./web
+            dockerfile: Dockerfile
+        container_name: bookcrossing_worker
+        restart: always
+        env_file:
+            - ./web/.env
+        environment:
+            POSTGRES_HOST: db
+            DB_URL: postgresql+asyncpg://postgres:password@db:5432/bookcrossing_db
+            REDIS_URL: redis://redis:6379/0
+        depends_on:
+            db:
+                condition: service_healthy
+            redis:
+                condition: service_started
+            parser:
+                condition: service_started
+        command: >
+            sh -c "celery -A worker.celery_app worker --loglevel=info"
 
 volumes:
     postgres_data:

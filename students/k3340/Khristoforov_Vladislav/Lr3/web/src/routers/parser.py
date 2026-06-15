@@ -1,7 +1,7 @@
 """
 Модуль интеграции с микросервисом парсинга.
 
-Предоставляет HTTP-эндпоинты для синхронного взаимодействия с сервисом извлечения
+Предоставляет HTTP-эндпоинты для синхронного и асинхронного взаимодействия с сервисом извлечения
 данных и последующего сохранения объектов в локальную базу данных приложения.
 """
 
@@ -11,6 +11,9 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select, func
 from pydantic import BaseModel
 from typing import List, Dict, Any
+
+from celery.result import AsyncResult
+from worker import celery_app, parse_and_save_task
 
 from database import get_session
 from models.books import Book, BookPublicWithGenres, BookCondition, Genre
@@ -28,6 +31,10 @@ class ParseRequestURL(BaseModel):
     """
     url: str
 
+class TaskResponse(BaseModel):
+    """Схема ответа для управления фоновыми задачами."""
+    task_id: str
+    status: str
 
 async def _fetch_data_from_microservice(url: str) -> Dict[str, Any]:
     """
@@ -155,3 +162,37 @@ async def parse_and_save_sync(
     new_book = await _save_parsed_book(session, parser_data, current_user.id)
     
     return new_book
+
+@router.post("/async", response_model=TaskResponse)
+async def parse_and_save_async(
+    request: ParseRequestURL, 
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Асинхронный пайплайн парсинга.
+    
+    Не дожидается результата обработки. Отправляет задачу в очередь брокера (Redis)
+    и моментально возвращает клиенту уникальный идентификатор задачи.
+    """
+    task = parse_and_save_task.delay(request.url, current_user.id)
+    return {"task_id": task.id, "status": "Task added to queue"}
+
+
+@router.get("/status/{task_id}")
+async def get_task_status(task_id: str):
+    """
+    Мониторинг состояния фоновой задачи по ее ID.
+    
+    Возможные статусы: PENDING, STARTED, SUCCESS, FAILURE.
+    """
+    task_result = AsyncResult(task_id, app=celery_app)
+    
+    response = {
+        "task_id": task_id,
+        "status": task_result.status,
+    }
+    
+    if task_result.ready():
+        response["result"] = task_result.result
+        
+    return response
