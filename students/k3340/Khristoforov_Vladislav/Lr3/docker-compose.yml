@@ -84,5 +84,26 @@ services:
         command: >
             sh -c "celery -A worker.celery_app worker --loglevel=info"
 
+    # Планировщик периодических задач (Celery Beat)
+    celery_beat:
+        build:
+            context: ./web
+            dockerfile: Dockerfile
+        container_name: bookcrossing_beat
+        restart: always
+        env_file:
+            - ./web/.env
+        environment:
+            POSTGRES_HOST: db
+            DB_URL: postgresql+asyncpg://postgres:password@db:5432/bookcrossing_db
+            REDIS_URL: redis://redis:6379/0
+        depends_on:
+            redis:
+                condition: service_started
+            db:
+                condition: service_healthy
+        command: >
+            sh -c "celery -A worker.celery_app beat --loglevel=info"
+
 volumes:
     postgres_data:
